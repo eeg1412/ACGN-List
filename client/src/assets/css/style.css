@@ -257,3 +257,14 @@ input[type=tel], input[type=text],input[type=number],input[type=password]{-webki
 .acgnlist_admin_edit_modal .ant-upload-list-item{
     display: none;
 }
+.ant-input.tag-input,.ant-select.tag-input{
+    width: 55px!important;
+    height: 22px!important;
+    margin-right: 8px;
+    vertical-align: 0;
+    font-size: 12px;
+}
+.acgnlist_admin_form .ant-tag,.acgnlist_admin_form .tag-input{
+    margin-top: 5px;
+    margin-bottom: 5px;
+}

@@ -1,19 +1,39 @@
 import React, { Component } from 'react';
-import { Button, Table, Switch, Modal, Form, Input, Upload, Tag, Image, Select, Slider, DatePicker } from 'antd';
+import { Button, Table, Switch, Modal, Form, Tag, Slider, Input } from 'antd';
 import { EditOutlined } from '@ant-design/icons';
 import ReactMarkdown from 'react-markdown/with-html';
-import Crop from './crop';
-const { Option } = Select;
-const { TextArea } = Input;
+import BaseFormItem from '../../components/baseFormItem'
+import EditableTagGroup from '../../components/editableTagGroup'
+const _ = require('lodash');
+
+const rawForm = {
+    base64: '',
+    title: '',
+    series: '',
+    originalName: '',
+    publishingHouse: '',
+    status: 'doing',
+    progress: 0,
+    tags: [],
+    score: 0,
+    comment: '',
+    introduce: '',
+    remarks: '',
+    startDate: 0,
+    endDate: 0,
+    show: false,
+
+    progress: 0,
+    original: [],
+    author: [],
+}
+
 class adminComic extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            editForm: {
-                base64: ''
-            },
-            cropFile: null,
-            cropDialogShow: false,
+            editForm: _.cloneDeep(rawForm),
+
             editModel: false,
             columns: [
                 {
@@ -206,26 +226,10 @@ class adminComic extends Component {
                     score: 10,
                 }
             ],
-            fileList: [],
         };
 
     }
 
-    beforeUpload = file => {
-        console.log(file);
-        this.setState(state => ({
-            fileList: [file]
-        }));
-        const reader = new FileReader();
-        reader.addEventListener("load", () =>
-            this.setState(state => ({
-                cropFile: reader.result,
-                cropDialogShow: true,
-            }))
-        );
-        reader.readAsDataURL(file);
-        return false;
-    };
     showModal = () => {
         this.setState({
             editModel: true,
@@ -245,25 +249,6 @@ class adminComic extends Component {
         });
     };
 
-    handleCropOk = (base64) => {
-        const editForm = Object.assign({}, this.state.editForm, { base64: base64 })
-        // console.log(base64);
-        this.setState({
-            cropFile: null,
-            cropDialogShow: false,
-            editForm: editForm
-        });
-        console.log(this.state);
-    };
-
-    handleCropCancel = e => {
-        console.log(e);
-        this.setState({
-            cropFile: null,
-            cropDialogShow: false,
-        });
-    };
-
     showText = (text, title) => {
         Modal.info({
             title: title,
@@ -276,6 +261,14 @@ class adminComic extends Component {
                 </div>
             ),
             onOk () { },
+        });
+    }
+    formChange = (key, value) => {
+        let newObj = {};
+        newObj[key] = value;
+        const editForm = Object.assign({}, this.state.editForm, newObj);
+        this.setState({
+            editForm: editForm
         });
     }
     render () {
@@ -309,77 +302,26 @@ class adminComic extends Component {
                             labelCol={{ span: 4 }}
                             wrapperCol={{ span: 18 }}
                             layout="horizontal"
+                            className="acgnlist_admin_form"
                         >
-                            <Form.Item label="封面">
-                                {this.state.editForm.base64 && <Image
-                                    src={this.state.editForm.base64} width="100%" className="mb5" alt="封面"
-                                />}
-                                <Upload
-                                    fileList={this.state.fileList}
-                                    beforeUpload={this.beforeUpload}
-                                >
-                                    <Button>{this.state.editForm.base64 ? '重新选择' : '选择封面'}</Button>
-                                </Upload>
-                            </Form.Item>
-                            <Form.Item label="标题">
-                                <Input />
-                            </Form.Item>
-                            <Form.Item label="原名">
-                                <Input />
-                            </Form.Item>
-                            <Form.Item label="系列">
-                                数码宝贝系列 <Button>{this.state.editForm.base64 ? '重新选择' : '选择系列'}</Button>
-                            </Form.Item>
+                            <BaseFormItem editForm={this.state.editForm} formChange={(key, value) => this.formChange(key, value)} />
                             <Form.Item label="原作">
-                                <Tag>原作</Tag>
+                                <EditableTagGroup type={"input"} />
                             </Form.Item>
                             <Form.Item label="作者">
-                                <Tag>原作</Tag>
+                                <EditableTagGroup type={"input"} />
                             </Form.Item>
                             <Form.Item label="出版社">
                                 <Input />
-                            </Form.Item>
-                            <Form.Item label="状态">
-                                <Select defaultValue="doing" style={{ width: 120 }}>
-                                    <Option value="doing">在看</Option>
-                                    <Option value="want">想看</Option>
-                                    <Option value="giveUp">舍弃</Option>
-                                    <Option value="done">看完</Option>
-                                </Select>
                             </Form.Item>
                             <Form.Item label="进度">
                                 <Slider defaultValue={0} className="acgnlist_admin_edit_slider" />
                                 <div>0%</div>
                             </Form.Item>
-                            <Form.Item label="标签">
-                                <Tag>标签</Tag>
-                            </Form.Item>
-                            <Form.Item label="评分">
-                                <Slider defaultValue={0} className="acgnlist_admin_edit_slider" />
-                                <div>0分</div>
-                            </Form.Item>
-                            <Form.Item label="点评">
-                                <TextArea rows={4} placeholder="支持Markdown格式" />
-                            </Form.Item>
-                            <Form.Item label="介绍">
-                                <TextArea rows={4} placeholder="支持Markdown格式" />
-                            </Form.Item>
-                            <Form.Item label="备注">
-                                <TextArea rows={4} placeholder="支持Markdown格式" />
-                            </Form.Item>
-                            <Form.Item label="开始时间">
-                                <DatePicker showTime placeholder="请选择开始时间" />
-                            </Form.Item>
-                            <Form.Item label="结束时间">
-                                <DatePicker showTime placeholder="请选择结束时间" />
-                            </Form.Item>
-                            <Form.Item label="是否显示">
-                                <Switch />
-                            </Form.Item>
                         </Form>
                     </div>
                 </Modal>
-                <Crop cropDialogShow={this.state.cropDialogShow} cropFile={this.state.cropFile} onOk={(base64) => this.handleCropOk(base64)} onCancel={() => this.handleCropCancel()} />
+
             </div>
         );
     }
