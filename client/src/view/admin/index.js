@@ -1,6 +1,12 @@
 import React, { Component } from 'react';
 import { Layout, Menu } from 'antd';
-import { AppstoreOutlined, MailOutlined, SettingOutlined } from '@ant-design/icons';
+import { Switch, Route } from 'react-router-dom';
+
+import series from './series'
+import anime from './anime'
+import comic from './comic'
+import game from './game'
+import novel from './novel'
 
 const { SubMenu } = Menu;
 
@@ -37,7 +43,7 @@ class adminIndex extends Component {
         return (
             <div className="acgnlist_admin_body">
                 <Layout>
-                    <Header>动漫游戏轻小说后台管理系统</Header>
+                    <Header>动画漫画游戏小说后台管理系统</Header>
                     <Layout>
                         <Sider
                             breakpoint="lg"
@@ -48,15 +54,23 @@ class adminIndex extends Component {
                                     selectedKeys={[this.state.current]}
                                     mode="inline"
                                 >
-                                    <Menu.Item key="/admin/serie">系列</Menu.Item>
+                                    <Menu.Item key="/admin/series">系列</Menu.Item>
                                     <Menu.Item key="/admin/anime">动画</Menu.Item>
                                     <Menu.Item key="/admin/comic">漫画</Menu.Item>
                                     <Menu.Item key="/admin/game">游戏</Menu.Item>
-                                    <Menu.Item key="/admin/lightnovel">轻小说</Menu.Item>
+                                    <Menu.Item key="/admin/novel">小说</Menu.Item>
                                 </Menu>
                             </div>
                         </Sider>
-                        <Content className="p20">Content</Content>
+                        <Content className="p20">
+                            <Switch>
+                                <Route path="/admin/series" exact component={series}></Route>
+                                <Route path="/admin/anime" exact component={anime}></Route>
+                                <Route path="/admin/comic" exact component={comic}></Route>
+                                <Route path="/admin/game" exact component={game}></Route>
+                                <Route path="/admin/novel" exact component={novel}></Route>
+                            </Switch>
+                        </Content>
                     </Layout>
                     <Footer>
                         <div className="tc">Powered by <a href="https://www.wikimoe.com" target="_blank">wikimoe</a></div>

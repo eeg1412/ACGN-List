@@ -166,6 +166,7 @@ input[type=tel], input[type=text],input[type=number],input[type=password]{-webki
 .bangumItem img{
     width:60px;
     height:88px;
+    object-fit: contain;
 }
 .bangumItem .textBox{
     text-overflow:ellipsis;
@@ -240,4 +241,19 @@ input[type=tel], input[type=text],input[type=number],input[type=password]{-webki
 }
 .acgnlist_admin_body .ant-layout{
     background: #fff;
+}
+.acgnlist_admin_post_img{
+    width: 100%;
+    max-width: 50px;
+    height: auto;
+}
+.ant-btn-link{
+    padding: 0px!important;
+}
+.acgnlist_crop_body img{
+    width: 100%;
+    height: auto;
+}
+.acgnlist_admin_edit_modal .ant-upload-list-item{
+    display: none;
 }

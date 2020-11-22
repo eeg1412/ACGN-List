@@ -16,15 +16,15 @@ ReactDOM.render(
       <Switch>
         <Route exact path="/" component={App}></Route>
         <Route exact path="/admin/login" component={adminLogin}></Route>
-        <Route exact path="/admin/serie" component={adminIndex}></Route>
+        <Route exact path="/admin/series" component={adminIndex}></Route>
         <Route exact path="/admin/anime" component={adminIndex}></Route>
         <Route exact path="/admin/comic" component={adminIndex}></Route>
         <Route exact path="/admin/game" component={adminIndex}></Route>
-        <Route exact path="/admin/lightnovel" component={adminIndex}></Route>
+        <Route exact path="/admin/novel" component={adminIndex}></Route>
         <Route exact path="/anime" component={App}></Route>
         <Route exact path="/game" component={App}></Route>
         <Route exact path="/comic" component={App}></Route>
-        <Route exact path="/lightnovel" component={App}></Route>
+        <Route exact path="/novel" component={App}></Route>
         <Route path="*">
           <Redirect to="/anime" />
         </Route>

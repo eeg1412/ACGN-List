@@ -5,7 +5,7 @@ import { Layout, Menu } from 'antd';
 import anime from './anime'
 import comic from './comic'
 import game from './game'
-import lightnovel from './lightnovel'
+import novel from './novel'
 
 const { Header, Footer, Content } = Layout;
 
@@ -57,8 +57,8 @@ class app extends React.Component {
               <Menu.Item key="/game">
                 游戏
               </Menu.Item>
-              <Menu.Item key="/lightnovel">
-                轻小说
+              <Menu.Item key="/novel">
+                小说
               </Menu.Item>
             </Menu>
           </Header>
@@ -67,10 +67,12 @@ class app extends React.Component {
               <Route path="/anime" exact component={anime}></Route>
               <Route path="/comic" exact component={comic}></Route>
               <Route path="/game" exact component={game}></Route>
-              <Route path="/lightnovel" exact component={lightnovel}></Route>
+              <Route path="/novel" exact component={novel}></Route>
             </Switch>
           </Content>
-          <Footer>Footer</Footer>
+          <Footer>
+            <div className="tc">Powered by <a href="https://www.wikimoe.com" target="_blank">wikimoe</a></div>
+          </Footer>
         </Layout>
       </div>
     )

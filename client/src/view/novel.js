@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Row, Col, Rate, Divider, Pagination } from 'antd';
 import { withRouter } from 'react-router-dom';
 
-class lightnovel extends Component {
+class novel extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -190,4 +190,4 @@ class lightnovel extends Component {
     }
 }
 
-export default withRouter(lightnovel);
+export default withRouter(novel);
