@@ -15,6 +15,7 @@ ReactDOM.render(
     <Router>
       <Switch>
         <Route exact path="/" component={App}></Route>
+        <Route exact path="/admin" component={adminIndex}></Route>
         <Route exact path="/admin/login" component={adminLogin}></Route>
         <Route exact path="/admin/series" component={adminIndex}></Route>
         <Route exact path="/admin/anime" component={adminIndex}></Route>

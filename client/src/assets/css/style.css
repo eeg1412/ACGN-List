@@ -277,3 +277,6 @@ input[type=tel], input[type=text],input[type=number],input[type=password]{-webki
     line-height: 1;
     content: "*";
 }
+.acgnlist_captcha{
+    width: 82px;
+}

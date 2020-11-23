@@ -9,6 +9,17 @@ const tailLayout = {
     wrapperCol: { offset: 4, span: 20 },
 };
 class adminLogin extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            src: 'https://nodejs.wikimoe.com:667/api/captcha?time=' + new Date().getTime()
+        }
+    }
+    reflushCaptcha = () => {
+        this.setState(state => ({
+            src: 'https://nodejs.wikimoe.com:667/api/captcha?time=' + new Date().getTime()
+        }))
+    }
     render () {
         return (
             <div className="acgnlist_admin_login_body">
@@ -29,6 +40,13 @@ class adminLogin extends Component {
                         name="password"
                     >
                         <Input.Password />
+                    </Form.Item>
+
+                    <Form.Item
+                        label="验证码"
+                        name="captcha"
+                    >
+                        <Input addonAfter={<img className="acgnlist_captcha" src={this.state.src} onClick={() => this.reflushCaptcha()} alt="验证码" />} />
                     </Form.Item>
 
                     <Form.Item {...tailLayout} name="remember" valuePropName="checked">
