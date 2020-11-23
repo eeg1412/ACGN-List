@@ -15,6 +15,9 @@ class adminLogin extends Component {
             src: 'https://nodejs.wikimoe.com:667/api/captcha?time=' + new Date().getTime()
         }
     }
+    componentDidMount () {
+        // TODO:判断当前是否存在管理员账户，如果没有跳转到注册
+    }
     reflushCaptcha = () => {
         this.setState(state => ({
             src: 'https://nodejs.wikimoe.com:667/api/captcha?time=' + new Date().getTime()

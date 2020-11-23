@@ -25,6 +25,7 @@ class adminIndex extends Component {
         this.setState({
             current: path
         });
+        // TODO:判断当前是否有登录信息
     }
     componentDidUpdate (prevProps, prevState) {
         if (prevProps.location.pathname !== this.props.location.pathname) {

@@ -5,6 +5,7 @@ import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-d
 import store from './store/data'
 import App from './view/App'
 import adminLogin from './view/admin/login'
+import adminRegister from './view/admin/register'
 import adminIndex from './view/admin/index'
 
 import './assets/css/style.css';
@@ -17,6 +18,7 @@ ReactDOM.render(
         <Route exact path="/" component={App}></Route>
         <Route exact path="/admin" component={adminIndex}></Route>
         <Route exact path="/admin/login" component={adminLogin}></Route>
+        <Route exact path="/admin/register" component={adminRegister}></Route>
         <Route exact path="/admin/series" component={adminIndex}></Route>
         <Route exact path="/admin/anime" component={adminIndex}></Route>
         <Route exact path="/admin/comic" component={adminIndex}></Route>
