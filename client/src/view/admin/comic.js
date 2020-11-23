@@ -1,27 +1,30 @@
 import React, { Component } from 'react';
-import { Button, Table, Switch, Modal, Form, Tag, Slider, Input } from 'antd';
-import { EditOutlined } from '@ant-design/icons';
+import { Button, Table, Switch, Modal, Form, Tag, Slider, Input, Image } from 'antd';
 import ReactMarkdown from 'react-markdown/with-html';
 import BaseFormItem from '../../components/baseFormItem'
 import EditableTagGroup from '../../components/editableTagGroup'
+import moment from 'moment';
 const _ = require('lodash');
 
 const rawForm = {
+    _id: '',
     base64: '',
     title: '',
-    series: '',
+    seriesName: '',
+    seriesId: '',
     originalName: '',
     publishingHouse: '',
     status: 'doing',
     progress: 0,
-    tags: [],
+    // tags: [],
     score: 0,
     comment: '',
     introduce: '',
     remarks: '',
-    startDate: 0,
-    endDate: 0,
-    show: false,
+    creatDate: "",
+    startDate: "",
+    endDate: "",
+    show: true,
 
     progress: 0,
     original: [],
@@ -41,11 +44,10 @@ class adminComic extends Component {
                     key: 'image',
                     width: 82,
                     fixed: 'left',
-                    render: src => <img className="acgnlist_admin_post_img" src="https://lain.bgm.tv/pic/cover/c/50/28/298451_AHqgU.jpg" alt="封面" />,
+                    render: (text, record, index) => <Image className="acgnlist_admin_post_img" src="https://lain.bgm.tv/pic/cover/c/50/28/298451_AHqgU.jpg" alt="封面" />,
                 },
                 {
                     title: '标题',
-                    fixed: 'left',
                     dataIndex: 'title',
                 },
                 {
@@ -117,21 +119,6 @@ class adminComic extends Component {
                     render: progress => <span>{progress}%</span>
                 },
                 {
-                    title: '标签',
-                    dataIndex: 'tags',
-                    render: tags => (
-                        <>
-                            {tags.map(tag => {
-                                return (
-                                    <Tag key={tag}>
-                                        {tag}
-                                    </Tag>
-                                );
-                            })}
-                        </>
-                    ),
-                },
-                {
                     title: '评分',
                     dataIndex: 'score',
                     render: score => <span>{score}分</span>,
@@ -154,28 +141,31 @@ class adminComic extends Component {
                 {
                     title: '录入时间',
                     dataIndex: 'creatDate',
+                    render: creatDate => <div>{moment(creatDate).format('YYYY-MM-DD h:mm:ss')}</div>
                 },
                 {
                     title: '开始时间',
                     dataIndex: 'startDate',
+                    render: startDate => <div>{moment(startDate).format('YYYY-MM-DD h:mm:ss')}</div>
                 },
                 {
                     title: '结束时间',
                     dataIndex: 'endDate',
+                    render: endDate => <div>{moment(endDate).format('YYYY-MM-DD h:mm:ss')}</div>
                 },
                 {
-                    title: '是否显示',
+                    title: '显示',
                     fixed: 'right',
-                    width: 90,
+                    width: 75,
                     dataIndex: 'show',
                     render: show => <Switch checked={show} />,
                 },
                 {
                     title: '操作',
                     fixed: 'right',
-                    width: 72,
+                    width: 65,
                     key: 'action',
-                    render: (text, record) => <Button type="primary" icon={<EditOutlined />}></Button>,
+                    render: (text, record) => <Button type="link" onClick={() => this.showModal(record)}>修改</Button>,
                 },
             ],
             data: [
@@ -191,11 +181,10 @@ class adminComic extends Component {
                     publishingHouse: 'Bandai',
                     title: '数码宝贝大冒险',
                     originalName: 'デジモンアドベンチャー',
-                    star: 35,
-                    creatDate: "2020-08-08",
+                    creatDate: "2020-11-07T11:50:06.116Z",
                     status: "doing",
-                    startDate: "2020-08-08",
-                    endDate: "2020-08-08",
+                    startDate: "2020-11-07T11:50:06.116Z",
+                    endDate: "2020-11-07T11:50:10.262Z",
                     tags: [],
                     progress: 90,
                     score: 20,
@@ -207,6 +196,7 @@ class adminComic extends Component {
                 {
                     _id: 'a154542as',
                     series: {
+                        _id: "asassa",
                         title: "数码宝贝"
                     },
                     original: ['原作'],
@@ -216,11 +206,10 @@ class adminComic extends Component {
                     publishingHouse: 'Bandai',
                     title: '数码宝贝大冒险',
                     originalName: 'デジモンアドベンチャー',
-                    star: 35,
-                    creatDate: "2020-08-08",
+                    creatDate: "2020-11-07T11:50:06.116Z",
                     status: "giveUp",
-                    startDate: "2020-08-08",
-                    endDate: "2020-08-08",
+                    startDate: "2020-11-07T11:50:06.116Z",
+                    endDate: "2020-11-07T11:50:10.262Z",
                     tags: ['数码宝贝'],
                     progress: 30,
                     score: 10,
@@ -230,9 +219,20 @@ class adminComic extends Component {
 
     }
 
-    showModal = () => {
+    showModal = (editForm) => {
+        let newEditForm = Object.assign({}, _.cloneDeep(rawForm), editForm);
+        // 如果有系列数据
+        if (newEditForm["series"]) {
+            newEditForm["seriesName"] = newEditForm["series"]["title"];
+            newEditForm["seriesId"] = newEditForm["series"]["_id"]
+        }
+        // 如果有ID为修改,定义一个URL TODO:到时候要改成服务器的图片地址
+        if (newEditForm["_id"]) {
+            newEditForm["base64"] = "https://lain.bgm.tv/pic/cover/c/50/28/298451_AHqgU.jpg";
+        }
         this.setState({
             editModel: true,
+            editForm: _.cloneDeep(newEditForm)
         });
     };
 
@@ -240,13 +240,17 @@ class adminComic extends Component {
         console.log(e);
         this.setState({
             editModel: false,
+            editForm: _.cloneDeep(rawForm)
         });
+        this.baseFormItem.initSeries()
     };
 
     handleCancel = e => {
         this.setState({
             editModel: false,
+            editForm: _.cloneDeep(rawForm)
         });
+        this.baseFormItem.initSeries()
     };
 
     showText = (text, title) => {
@@ -263,20 +267,36 @@ class adminComic extends Component {
             onOk () { },
         });
     }
-    formChange = (key, value) => {
+    formChange = async (key, value) => {
         let newObj = {};
         newObj[key] = value;
         const editForm = Object.assign({}, this.state.editForm, newObj);
-        this.setState({
-            editForm: editForm
+        console.log(editForm, newObj);
+        await new Promise((resolve, reject) => {
+            this.setState({
+                editForm: editForm
+            }, () => {
+                resolve('ok')
+            });
         });
+    }
+    inputChange = async (key, e) => {
+        const newText = e.target ? e.target.value : e;
+        // console.log(newText);
+        await this.formChange(key, newText);
+    }
+    onTagChange = async (key, tags) => {
+        await this.formChange(key, tags);
+    }
+    onRef = (ref) => {
+        this.baseFormItem = ref
     }
     render () {
         return (
             <div className="acgnlist_admin_r_body">
                 <div className="clearfix">
                     <div className="fr">
-                        <Button type="primary" onClick={this.showModal}>新增</Button>
+                        <Button type="primary" onClick={() => this.showModal(rawForm)}>新增</Button>
                     </div>
                 </div>
                 <div className="mt10">
@@ -304,19 +324,19 @@ class adminComic extends Component {
                             layout="horizontal"
                             className="acgnlist_admin_form"
                         >
-                            <BaseFormItem editForm={this.state.editForm} formChange={(key, value) => this.formChange(key, value)} />
+                            <BaseFormItem onRef={this.onRef} editForm={this.state.editForm} formChange={(key, value) => this.formChange(key, value)} />
                             <Form.Item label="原作">
-                                <EditableTagGroup type={"input"} />
+                                <EditableTagGroup type={"input"} tags={this.state.editForm.original} onTagChange={(tags) => this.onTagChange("original", tags)} />
                             </Form.Item>
-                            <Form.Item label="作者">
-                                <EditableTagGroup type={"input"} />
+                            <Form.Item label="作者" className="acgnlist-form-item-required">
+                                <EditableTagGroup type={"input"} tags={this.state.editForm.author} onTagChange={(tags) => this.onTagChange("author", tags)} />
                             </Form.Item>
                             <Form.Item label="出版社">
-                                <Input />
+                                <Input value={this.state.editForm.publishingHouse} onChange={(e) => this.inputChange("publishingHouse", e)} />
                             </Form.Item>
-                            <Form.Item label="进度">
-                                <Slider defaultValue={0} className="acgnlist_admin_edit_slider" />
-                                <div>0%</div>
+                            <Form.Item label="进度" className="acgnlist-form-item-required">
+                                <Slider defaultValue={0} value={this.state.editForm.progress} onChange={(value) => this.inputChange("progress", value)} className="acgnlist_admin_edit_slider" />
+                                <div>{this.state.editForm.progress}%</div>
                             </Form.Item>
                         </Form>
                     </div>

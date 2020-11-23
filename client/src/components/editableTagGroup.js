@@ -7,7 +7,7 @@ export default class editableTagGroup extends Component {
         super(props);
         this.state = {
             options: [{ value: '1235' }, { value: '2358' }],
-            tags: [],
+            // tags: [],
             inputVisible: false,
             inputValue: '',
             editInputIndex: -1,
@@ -16,9 +16,10 @@ export default class editableTagGroup extends Component {
     }
 
     handleClose = removedTag => {
-        const tags = this.state.tags.filter(tag => tag !== removedTag);
+        const tags = this.props.tags.filter(tag => tag !== removedTag);
         console.log(tags);
-        this.setState({ tags });
+        this.props.onTagChange(tags);
+        // this.setState({ tags });
     };
 
     showInput = () => {
@@ -32,13 +33,14 @@ export default class editableTagGroup extends Component {
 
     handleInputConfirm = () => {
         const { inputValue } = this.state;
-        let { tags } = this.state;
+        let { tags } = this.props;
         if (inputValue && tags.indexOf(inputValue) === -1) {
             tags = [...tags, inputValue];
         }
         console.log(tags);
+        this.props.onTagChange(tags);
         this.setState({
-            tags,
+            // tags,
             inputVisible: false,
             inputValue: '',
         });
@@ -50,16 +52,26 @@ export default class editableTagGroup extends Component {
     };
 
     handleEditInputConfirm = () => {
-        this.setState(({ tags, editInputIndex, editInputValue }) => {
-            const newTags = [...tags];
-            newTags[editInputIndex] = editInputValue;
+        const tags = this.props.tags;
+        this.setState(({ editInputIndex, editInputValue }) => {
+            if (editInputValue) {
+                const newTags = [...tags];
+                newTags[editInputIndex] = editInputValue;
+                this.props.onTagChange(newTags);
+                return {
+                    editInputIndex: -1,
+                    editInputValue: '',
+                };
+            } else {
+                return {
+                    editInputIndex: -1,
+                    editInputValue: '',
+                };
+            }
 
-            return {
-                tags: newTags,
-                editInputIndex: -1,
-                editInputValue: '',
-            };
         });
+
+
     };
 
     saveInputRef = input => {
@@ -76,7 +88,8 @@ export default class editableTagGroup extends Component {
     }
 
     render () {
-        const { tags, inputVisible, inputValue, editInputIndex, editInputValue } = this.state;
+        const { inputVisible, inputValue, editInputIndex, editInputValue } = this.state;
+        const { tags } = this.props;
         return (
             <>
                 {tags.map((tag, index) => {
@@ -163,7 +176,7 @@ export default class editableTagGroup extends Component {
                 )}
                 {!inputVisible && (
                     <Tag className="site-tag-plus" onClick={this.showInput}>
-                        <PlusOutlined /> 新建
+                        <PlusOutlined /> 添加
                     </Tag>
                 )}
             </>
