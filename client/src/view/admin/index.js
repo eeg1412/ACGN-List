@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Layout, Menu } from 'antd';
 import { Switch, Route } from 'react-router-dom';
+import { connect } from 'react-redux'
 
 import series from './series'
 import anime from './anime'
@@ -25,7 +26,10 @@ class adminIndex extends Component {
         this.setState({
             current: path
         });
-        // TODO:判断当前是否有登录信息
+        // 判断当前是否有登录信息
+        if (!this.props.adminToken) {
+            this.props.history.replace('/admin/login');
+        }
     }
     componentDidUpdate (prevProps, prevState) {
         if (prevProps.location.pathname !== this.props.location.pathname) {
@@ -82,5 +86,16 @@ class adminIndex extends Component {
         );
     }
 }
+//将state映射到props函数
+function mapStateToProps (state) {
+    return { ...state }
+}
 
-export default adminIndex;
+
+//将修改state数据的方法，映射到props,默认会传入store里的dispach方法
+function mapDispatchToProps (dispatch) {
+    return {
+        setAdminToken: () => { dispatch({ type: 'setAdminToken' }) },
+    }
+}
+export default connect(mapStateToProps, mapDispatchToProps)(adminIndex);

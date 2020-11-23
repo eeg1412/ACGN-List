@@ -1,16 +1,14 @@
 
 let methods = {
-    add:function(state,action){
-        state.num++
-        return state
+    setAdminToken: (state, action) => {
+        const adminToken = sessionStorage.getItem("adminToken") ? sessionStorage.getItem("adminToken") : localStorage.getItem("adminToken");
+        state.adminToken = adminToken;
+        return state;
     },
-    addNum:function(state,action){
-        
-        state.num = state.num + action.num;
-        return state
-    },
-    setTimu:function(state,action){
-        state.timuList = action.content;
+    removeAdminToken: (state, action) => {
+        state.adminToken = '';
+        sessionStorage.removeItem("adminToken");
+        localStorage.removeItem("adminToken");
         return state;
     }
 }

@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
-import { Form, Input, Button, Checkbox } from 'antd';
+import { Form, Input, Button, Checkbox, message } from 'antd';
+import { authApi } from "../../api";
+import { connect } from 'react-redux'
 
 const layout = {
     labelCol: { span: 4 },
@@ -12,16 +14,66 @@ class adminLogin extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            src: 'https://nodejs.wikimoe.com:667/api/captcha?time=' + new Date().getTime()
+            src: '/api/captcha?time=' + new Date().getTime(),
+            loginForm: {
+                account: '',
+                password: '',
+                captcha: '',
+                save: false,
+            }
         }
     }
     componentDidMount () {
-        // TODO:判断当前是否存在管理员账户，如果没有跳转到注册
+        // 判断当前是否存在管理员账户，如果没有跳转到注册
+        this.checkAdmin();
+    }
+    checkAdmin = () => {
+        authApi.checkadmin().then(res => {
+            const haveAccount = res.data.haveAccount;
+            if (!haveAccount) {
+                this.props.history.replace('/admin/register');
+            }
+            // 检测是否有登录账户
+            if (this.props.adminToken) {
+                this.props.history.replace('/admin/series');
+            }
+        });
     }
     reflushCaptcha = () => {
         this.setState(state => ({
-            src: 'https://nodejs.wikimoe.com:667/api/captcha?time=' + new Date().getTime()
+            src: '/api/captcha?time=' + new Date().getTime()
         }))
+    }
+    onChangeForm = (key, value) => {
+        let newObj = {};
+        newObj[key] = value;
+        const loginForm = Object.assign({}, this.state.loginForm, newObj);
+        console.log(loginForm, newObj);
+        this.setState({
+            loginForm: loginForm
+        });
+    }
+    login = () => {
+        authApi.adminlogin(this.state.loginForm).then(res => {
+            console.log(res);
+            const code = res.data.code;
+            if (code === 0) {
+                message.error(res.data.msg);
+            } else if (code === 1) {
+                if (this.state.loginForm.save) {
+                    localStorage.setItem("adminToken", res.data.token);
+                } else {
+                    sessionStorage.setItem("adminToken", res.data.token);
+                }
+                console.log(this);
+                this.props.setAdminToken();
+                setTimeout(() => {
+                    this.props.history.replace('/admin/series');
+                }, 20);
+
+            }
+            this.reflushCaptcha();
+        });
     }
     render () {
         return (
@@ -33,31 +85,28 @@ class adminLogin extends Component {
                 >
                     <Form.Item
                         label="用户名"
-                        name="username"
                     >
-                        <Input />
+                        <Input value={this.state.loginForm.account} onChange={(e) => this.onChangeForm('account', e.target.value)} />
                     </Form.Item>
 
                     <Form.Item
                         label="密码"
-                        name="password"
                     >
-                        <Input.Password />
+                        <Input.Password value={this.state.loginForm.password} onChange={(e) => this.onChangeForm('password', e.target.value)} />
                     </Form.Item>
 
                     <Form.Item
                         label="验证码"
-                        name="captcha"
                     >
-                        <Input addonAfter={<img className="acgnlist_captcha" src={this.state.src} onClick={() => this.reflushCaptcha()} alt="验证码" />} />
+                        <Input value={this.state.loginForm.captcha} onChange={(e) => this.onChangeForm('captcha', e.target.value)} addonAfter={<img className="acgnlist_captcha" src={this.state.src} onClick={() => this.reflushCaptcha()} alt="验证码" />} />
                     </Form.Item>
 
                     <Form.Item {...tailLayout} name="remember" valuePropName="checked">
-                        <Checkbox>保持登录状态</Checkbox>
+                        <Checkbox checked={this.state.loginForm.save} onChange={(e) => this.onChangeForm('save', e.target.checked)}>保持登录状态</Checkbox>
                     </Form.Item>
 
                     <Form.Item {...tailLayout}>
-                        <Button type="primary">
+                        <Button onClick={this.login} type="primary">
                             登录
                         </Button>
                     </Form.Item>
@@ -66,5 +115,16 @@ class adminLogin extends Component {
         );
     }
 }
+//将state映射到props函数
+function mapStateToProps (state) {
+    return { ...state }
+}
 
-export default adminLogin;
+
+//将修改state数据的方法，映射到props,默认会传入store里的dispach方法
+function mapDispatchToProps (dispatch) {
+    return {
+        setAdminToken: () => { dispatch({ type: 'setAdminToken' }) },
+    }
+}
+export default connect(mapStateToProps, mapDispatchToProps)(adminLogin);
