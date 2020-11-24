@@ -8,8 +8,8 @@ import adminLogin from './view/admin/login'
 import adminRegister from './view/admin/register'
 import adminIndex from './view/admin/index'
 
-import './assets/css/style.css';
 import 'antd/dist/antd.css';
+import './assets/css/style.css';
 
 ReactDOM.render(
   <Provider store={store}>

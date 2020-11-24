@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Layout, Menu } from 'antd';
+import { Layout, Menu, Button } from 'antd';
 import { Switch, Route, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux'
 
@@ -40,12 +40,17 @@ class adminIndex extends Component {
         this.setState({ current: e.key });
         this.props.history.push(e.key);
     };
+    quit = () => {
+        sessionStorage.removeItem("adminToken");
+        localStorage.removeItem("adminToken");
+        this.props.setAdminToken();
+    }
     render () {
         return (
             <>
                 {this.props.adminToken ? (<div className="acgnlist_admin_body">
                     <Layout>
-                        <Header>动画漫画游戏小说后台管理系统</Header>
+                        <Header>动画漫画游戏小说后台管理系统<div className="fr"><Button onClick={() => this.quit()} className="cWhite" type="link" >[退出]</Button></div></Header>
                         <Layout>
                             <Sider
                                 breakpoint="lg"
