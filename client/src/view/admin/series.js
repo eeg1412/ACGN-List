@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
-import { Button, Table, Switch, Modal, Form, Tag, Slider, Input, Image, Upload } from 'antd';
+import { Button, Table, message, Modal, Form, Tag, Input, Image, Upload } from 'antd';
 import moment from 'moment';
 import ReactMarkdown from 'react-markdown/with-html';
 import EditableTagGroup from '../../components/editableTagGroup'
 import Crop from '../../components/crop';
+import { authApi } from "../../api";
 const _ = require('lodash');
 const { TextArea } = Input;
 
@@ -139,9 +140,32 @@ class adminSeries extends Component {
     };
     handleOk = e => {
         console.log(e);
-        this.setState({
-            editModel: false,
-            editForm: _.cloneDeep(rawForm)
+        if (!this.state.editForm.base64) {
+            message.error('请选择封面');
+            return false;
+        }
+        if (!this.state.editForm.title) {
+            message.error('请填写标题');
+            return false;
+        }
+        let params = _.cloneDeep(this.state.editForm);
+        let newTags = [];
+        this.state.editForm.tags.forEach((item) => {
+            newTags.push(item._id);
+        })
+        params['tags'] = newTags;
+        authApi.seriesCreateOrEdit(params).then(res => {
+            console.log(res);
+            const code = res.data.code;
+            if (code === 0) {
+                message.error(res.data.msg);
+            } else if (code === 1) {
+                this.setState({
+                    editModel: false,
+                    editForm: _.cloneDeep(rawForm)
+                });
+                message.success('提交成功');
+            }
         });
     };
 

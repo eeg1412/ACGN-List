@@ -15,6 +15,9 @@ export default function (api) {
     tagsearch (data) {
       return api.post('/tagsearch', data)
     },
+    seriesCreateOrEdit (data) {
+      return api.post('/seriesCreateOrEdit', data)
+    },
     checkadmin () {
       return api.get('/checkadmin')
     },

@@ -7,6 +7,7 @@ var series = new Schema({
     tags: { type: [Schema.Types.ObjectId], ref: 'tags', default: [] },//标签
     comment: { type: String, default: "" },//点评
     remarks: { type: String, default: "" },//备注
+    type: { type: String, default: "series" },//类型
     creatDate: {
         type: Date,
         default: Date.now

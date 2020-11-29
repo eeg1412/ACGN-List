@@ -1,10 +1,12 @@
 const seriesUtils = require('../mongodb/utils/series');
+const tagsUtils = require('../mongodb/utils/tags');
 const utils = require('../utils/utils');
 var jwt = require('jsonwebtoken');
 var chalk = require('chalk');
 const validator = require('validator');
 const _ = require('lodash');
 const { base } = require('../mongodb/models/tags');
+const fs = require('fs')
 
 module.exports = async function (req, res, next) {
     // 数据读取
@@ -61,7 +63,7 @@ module.exports = async function (req, res, next) {
     }
     // 校验选填选项
     if (base64) {
-        let jpgReg = new RegExp("data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/");
+        let jpgReg = new RegExp("data:image/jpeg;base64,");
         let isJpg = jpgReg.test(base64);
         if (!isJpg) {
             res.send({
@@ -86,6 +88,7 @@ module.exports = async function (req, res, next) {
     } else {
         if (tags.length > 0) {
             tags = _.uniq(tags);
+            let itemTagsId = [];
             for (let i = 0; i < tags.length; i++) {
                 const id = tags[i];
                 if (!validator.isMongoId(id)) {
@@ -98,10 +101,22 @@ module.exports = async function (req, res, next) {
                     );
                     return false;
                 };
+                itemTagsId.push(id);
             }
             // 校验这些标签ID是否存在
-
-
+            const itemTagsParams = { _id: { $in: itemTagsId } };
+            const itemTags = await tagsUtils.findMany(itemTagsParams);
+            console.log(itemTags);
+            if (itemTags.length !== tags.length) {
+                res.send({
+                    code: 0,
+                    msg: '标签数据有误!'
+                });
+                console.error(
+                    chalk.yellow('系列标签数据有误!')
+                );
+                return false;
+            }
 
         }
 
@@ -120,5 +135,20 @@ module.exports = async function (req, res, next) {
         return false;
     }
     // 写入数据
+    const seriesParams = {
+        title: title,//标题
+        originalName: originalName,//原名
+        tags: tags,//标签
+        comment: comment,//点评
+        remarks: remarks,//备注
+    };
+    const seriesData = await seriesUtils.save(seriesParams);
+    console.log(seriesData);
     // 写入封面文件
+    const base64Data = base64.replace(/^data:image\/jpeg;base64,/, "");
+    fs.writeFileSync(`./cover/series/${seriesData._id}.jpg`, base64Data, 'base64');
+    res.send({
+        code: 1,
+        msg: 'ok'
+    });
 };

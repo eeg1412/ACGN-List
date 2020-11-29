@@ -12,6 +12,10 @@ exports.findOne = async function (parmas) {
     // document查询
     return await tagsModel.findOne(parmas);
 }
+exports.findMany = async function (parmas) {
+    // document查询
+    return await tagsModel.find(parmas);
+}
 
 exports.updateOne = async function (filters, parmas) {
     // document查询
