@@ -15,7 +15,7 @@ module.exports = async function (req, res, next) {
             msg: '页码信息有误！'
         });
         console.error(
-            chalk.yellow('查询标签，页面信息有误！')
+            chalk.yellow('查询标签，页码信息有误！')
         );
         return false;
     }

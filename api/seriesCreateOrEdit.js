@@ -1,11 +1,9 @@
 const seriesUtils = require('../mongodb/utils/series');
 const tagsUtils = require('../mongodb/utils/tags');
 const utils = require('../utils/utils');
-var jwt = require('jsonwebtoken');
 var chalk = require('chalk');
 const validator = require('validator');
 const _ = require('lodash');
-const { base } = require('../mongodb/models/tags');
 const fs = require('fs')
 
 module.exports = async function (req, res, next) {
@@ -142,11 +140,24 @@ module.exports = async function (req, res, next) {
         comment: comment,//点评
         remarks: remarks,//备注
     };
-    const seriesData = await seriesUtils.save(seriesParams);
-    console.log(seriesData);
+    let seriesData = null;
+    if (type === 'edit') {
+        await seriesUtils.updateOne({ _id: _id }, seriesParams);
+    } else {
+        seriesData = await seriesUtils.save(seriesParams);
+    }
+    // console.log(seriesData);
     // 写入封面文件
-    const base64Data = base64.replace(/^data:image\/jpeg;base64,/, "");
-    fs.writeFileSync(`./cover/series/${seriesData._id}.jpg`, base64Data, 'base64');
+    if (base64) {
+        if (seriesData) {
+            const base64Data = base64.replace(/^data:image\/jpeg;base64,/, "");
+            fs.writeFileSync(`./cover/series/${seriesData._id}.jpg`, base64Data, 'base64');
+        } else {
+            const base64Data = base64.replace(/^data:image\/jpeg;base64,/, "");
+            fs.writeFileSync(`./cover/series/${_id}.jpg`, base64Data, 'base64');
+        }
+
+    }
     res.send({
         code: 1,
         msg: 'ok'

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { Button, Table, message, Modal, Form, Tag, Input, Image, Upload } from 'antd';
+import { Button, Table, message, Modal, Form, Tag, Input, Image, Upload, Pagination } from 'antd';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import ReactMarkdown from 'react-markdown/with-html';
 import EditableTagGroup from '../../components/editableTagGroup'
@@ -7,6 +8,8 @@ import Crop from '../../components/crop';
 import { authApi } from "../../api";
 const _ = require('lodash');
 const { TextArea } = Input;
+const { confirm } = Modal;
+const { Search } = Input;
 
 const rawForm = {
     _id: '',
@@ -22,6 +25,10 @@ class adminSeries extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            keyword: '',
+            total: 0,
+            page: 1,
+            timestamp: new Date().getTime(),
             fileList: [],
             cropFile: null,
             cropDialogShow: false,
@@ -33,7 +40,7 @@ class adminSeries extends Component {
                     key: 'image',
                     width: 82,
                     fixed: 'left',
-                    render: (text, record, index) => <Image className="acgnlist_admin_post_img" src="https://lain.bgm.tv/pic/cover/c/50/28/298451_AHqgU.jpg" alt="封面" />,
+                    render: (text, record, index) => <Image className="acgnlist_admin_post_img" src={`/api/cover?type=${record.type}&id=${record._id}&t=${this.state.timestamp}`} alt="封面" />,
                 },
                 {
                     title: '标题',
@@ -62,49 +69,71 @@ class adminSeries extends Component {
                     title: '点评',
                     dataIndex: 'comment',
                     width: 100,
-                    render: comment => <Button type="link" onClick={() => this.showText(comment, '点评')}>点击查看</Button>,
+                    render: comment => (comment && <Button type="link" onClick={() => this.showText(comment, '点评')}>点击查看</Button>),
                 },
                 {
                     title: '备注',
                     dataIndex: 'remarks',
                     width: 100,
-                    render: remarks => <Button type="link" onClick={() => this.showText(remarks, '备注')}>点击查看</Button>,
+                    render: remarks => (remarks && <Button type="link" onClick={() => this.showText(remarks, '备注')}>点击查看</Button>),
                 },
                 {
                     title: '录入时间',
                     dataIndex: 'creatDate',
-                    render: creatDate => <div>{moment(creatDate).format('YYYY-MM-DD h:mm:ss')}</div>
+                    render: creatDate => <div>{moment(creatDate).format('YYYY年MM月DD日 HH:mm:ss')}</div>
                 },
                 {
                     title: '操作',
                     fixed: 'right',
-                    width: 65,
+                    width: 100,
                     key: 'action',
-                    render: (text, record) => <Button type="link" onClick={() => this.showModal(record)}>修改</Button>,
+                    render: (text, record) => <div><Button type="link" onClick={() => this.showModal(record)}>修改</Button> <Button type="link" onClick={() => this.showDeleteConfirm(record._id)}>删除</Button></div>,
                 },
             ],
-            data: [
-                {
-                    _id: 'vasas',
-                    title: '物语系列',//标题
-                    originalName: '物語シリーズ',//原名
-                    tags: [
-                        {
-                            _id: '111',
-                            name: '萌'
-                        },
-                        {
-                            _id: '222',
-                            name: '恐怖'
-                        }],//标签
-                    comment: `# 見出し
-测试  
-测试`,//点评
-                    remarks: '',//备注
-                    creatDate: "2020-11-07T11:50:10.262Z",//录入时间
-                }
-            ],
+            data: [],
         }
+    }
+    componentDidMount () {
+        this.searchSeries();
+    }
+    showDeleteConfirm = (id) => {
+        confirm({
+            title: '是否删除?',
+            icon: <ExclamationCircleOutlined />,
+            content: '删除后将无法恢复！',
+            okText: '是',
+            okType: 'danger',
+            cancelText: '否',
+            onOk: () => {
+                console.log('OK', id);
+                authApi.seriesDelete({ _id: id }).then((res) => {
+                    const code = res.data.code;
+                    if (code === 0) {
+                        message.error(res.data.msg);
+                    } else if (code === 1) {
+                        this.searchSeries();
+                    }
+                });
+            },
+            onCancel () {
+                console.log('Cancel');
+            },
+        });
+    }
+    searchSeries = () => {
+        const params = {
+            page: this.state.page,
+            keyword: this.state.keyword
+        }
+        authApi.seriesSearch(params).then((res) => {
+            console.log(res);
+            if (res.data.code === 1) {
+                this.setState({
+                    data: res.data.info.data,
+                    total: res.data.info.total,
+                });
+            }
+        });
     }
     onTagChange = async (key, tags) => {
         await this.formChange(key, tags);
@@ -131,7 +160,7 @@ class adminSeries extends Component {
         let newEditForm = Object.assign({}, _.cloneDeep(rawForm), editForm);
         // 如果有ID为修改,定义一个URL TODO:到时候要改成服务器的图片地址
         if (newEditForm["_id"]) {
-            newEditForm["base64"] = "https://lain.bgm.tv/pic/cover/c/50/28/298451_AHqgU.jpg";
+            newEditForm["base64"] = `/api/cover?type=series&id=${newEditForm["_id"]}&t=${this.state.timestamp}`;
         }
         this.setState({
             editModel: true,
@@ -154,6 +183,14 @@ class adminSeries extends Component {
             newTags.push(item._id);
         })
         params['tags'] = newTags;
+        if (params.base64.indexOf('/api/cover') !== -1) {
+            params.base64 = '';
+        }
+        if (params['_id']) {
+            params['type'] = 'edit';
+        } else {
+            params['type'] = 'create';
+        }
         authApi.seriesCreateOrEdit(params).then(res => {
             console.log(res);
             const code = res.data.code;
@@ -162,9 +199,11 @@ class adminSeries extends Component {
             } else if (code === 1) {
                 this.setState({
                     editModel: false,
-                    editForm: _.cloneDeep(rawForm)
+                    editForm: _.cloneDeep(rawForm),
+                    timestamp: new Date().getTime(),
                 });
                 message.success('提交成功');
+                this.searchSeries();
             }
         });
     };
@@ -219,10 +258,33 @@ class adminSeries extends Component {
         await this.formChange('base64', base64);
         console.log(this.state);
     };
+    pageChange = (page) => {
+        this.setState({
+            page: page
+        }, () => {
+            this.searchSeries();
+        });
+    }
+    onKeywordChange = (e) => {
+        this.setState({
+            keyword: e.target.value,
+        });
+    }
+    onKeywordSearch = (value) => {
+        this.setState({
+            page: 1,
+        }, () => {
+            this.searchSeries();
+        });
+
+    }
     render () {
         return (
             <div>
                 <div className="clearfix">
+                    <div className='fl'>
+                        <Search placeholder="输入标题" value={this.state.keyword} onChange={this.onKeywordChange} onSearch={this.onKeywordSearch} />
+                    </div>
                     <div className="fr">
                         <Button type="primary" onClick={() => this.showModal(rawForm)}>新增</Button>
                     </div>
@@ -232,8 +294,17 @@ class adminSeries extends Component {
                         bordered
                         columns={this.state.columns}
                         dataSource={this.state.data}
-                        scroll={{ x: 1000 }} sticky />
-                </div><Modal
+                        scroll={{ x: 1000 }} sticky
+                        pagination={false} />
+                    <div className="tr mt10">
+                        <Pagination current={this.state.page}
+                            total={this.state.total}
+                            onChange={this.pageChange}
+                            pageSize={20} />
+                    </div>
+
+                </div>
+                <Modal
                     className="acgnlist_admin_edit_modal"
                     title="系列增改"
                     okText="确认"

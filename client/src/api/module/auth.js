@@ -18,6 +18,12 @@ export default function (api) {
     seriesCreateOrEdit (data) {
       return api.post('/seriesCreateOrEdit', data)
     },
+    seriesSearch (data) {
+      return api.post('/seriesSearch', data)
+    },
+    seriesDelete (data) {
+      return api.post('/seriesDelete', data)
+    },
     checkadmin () {
       return api.get('/checkadmin')
     },
