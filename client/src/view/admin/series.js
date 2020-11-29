@@ -45,12 +45,12 @@ class adminSeries extends Component {
                 {
                     title: '标签',
                     dataIndex: 'tags',
-                    render: author => (
+                    render: tags => (
                         <>
-                            {author.map(author => {
+                            {tags.map(tag => {
                                 return (
-                                    <Tag key={author}>
-                                        {author}
+                                    <Tag key={tag._id}>
+                                        {tag.name}
                                     </Tag>
                                 );
                             })}
@@ -87,7 +87,15 @@ class adminSeries extends Component {
                     _id: 'vasas',
                     title: '物语系列',//标题
                     originalName: '物語シリーズ',//原名
-                    tags: ['萌', '神秘'],//标签
+                    tags: [
+                        {
+                            _id: '111',
+                            name: '萌'
+                        },
+                        {
+                            _id: '222',
+                            name: '恐怖'
+                        }],//标签
                     comment: `# 見出し
 测试  
 测试`,//点评
@@ -102,7 +110,7 @@ class adminSeries extends Component {
     }
     formChange = async (key, value) => {
         let newObj = {};
-        newObj[key] = value;
+        newObj[key] = _.cloneDeep(value);
         const editForm = Object.assign({}, this.state.editForm, newObj);
         console.log(editForm, newObj);
         await new Promise((resolve, reject) => {
@@ -239,8 +247,8 @@ class adminSeries extends Component {
                             <Form.Item label="原名">
                                 <Input value={this.state.editForm.originalName} onChange={(e) => this.inputChange('originalName', e)} />
                             </Form.Item>
-                            <Form.Item label="标签" className="acgnlist-form-item-required">
-                                <EditableTagGroup tags={this.state.editForm.tags} onTagChange={(tags) => this.onTagChange("tags", tags)} />
+                            <Form.Item label="标签">
+                                <EditableTagGroup tags={this.state.editForm.tags} onTagChange={(tags) => this.onTagChange("tags", tags)} type="tags" />
                             </Form.Item>
                             <Form.Item label="点评">
                                 <TextArea rows={4} placeholder="支持Markdown格式" value={this.state.editForm.comment} onChange={(e) => this.inputChange('comment', e)} />

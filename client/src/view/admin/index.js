@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Layout, Menu, Button } from 'antd';
+import { Layout, Menu, Button, Spin } from 'antd';
 import { Switch, Route, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux'
 
@@ -48,6 +48,7 @@ class adminIndex extends Component {
     render () {
         return (
             <>
+                {this.props.loading && (<div className="acgnlist_loading_body"><Spin delay={500} /></div>)}
                 {this.props.adminToken ? (<div className="acgnlist_admin_body">
                     <Layout>
                         <Header>动画漫画游戏小说后台管理系统<div className="fr"><Button onClick={() => this.quit()} className="cWhite" type="link" >[退出]</Button></div></Header>

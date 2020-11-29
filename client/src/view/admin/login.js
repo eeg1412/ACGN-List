@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Form, Input, Button, Checkbox, message } from 'antd';
+import { Form, Input, Button, Checkbox, message, Spin } from 'antd';
 import { authApi } from "../../api";
 import { connect } from 'react-redux'
 
@@ -78,6 +78,7 @@ class adminLogin extends Component {
     render () {
         return (
             <div className="acgnlist_admin_login_body">
+                {this.props.loading && (<div className="acgnlist_loading_body"><Spin delay={500} /></div>)}
                 <div className="tc mt20 mb20"><h1>请登录</h1></div>
                 <Form
                     {...layout}

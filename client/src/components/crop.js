@@ -91,7 +91,7 @@ class crop extends Component {
             canvas.height
         );
 
-        const cropedImg = canvas.toDataURL("image/jpeg");
+        const cropedImg = canvas.toDataURL('image/jpeg', 0.9);
         return cropedImg;
     }
     render () {

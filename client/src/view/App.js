@@ -1,11 +1,12 @@
 import React from 'react';
 import { Switch, Route } from 'react-router-dom';
 import { authApi } from "../api";
-import { Layout, Menu } from 'antd';
+import { Layout, Menu, Spin } from 'antd';
 import anime from './anime'
 import comic from './comic'
 import game from './game'
 import novel from './novel'
+import { connect } from 'react-redux'
 
 const { Header, Footer, Content } = Layout;
 
@@ -45,6 +46,7 @@ class app extends React.Component {
   render () {
     return (
       <div className="acgnlist_body">
+        {this.props.loading && (<div className="acgnlist_loading_body"><Spin delay={500} /></div>)}
         <Layout>
           <Header>
             <Menu onClick={this.handleClick} selectedKeys={[this.state.current]} mode="horizontal">
@@ -81,5 +83,16 @@ class app extends React.Component {
   }
 }
 
+//将state映射到props函数
+function mapStateToProps (state) {
+  return { ...state }
+}
 
-export default app
+
+//将修改state数据的方法，映射到props,默认会传入store里的dispach方法
+function mapDispatchToProps (dispatch) {
+  return {
+    setAdminToken: () => { dispatch({ type: 'setAdminToken' }) },
+  }
+}
+export default connect(mapStateToProps, mapDispatchToProps)(app);

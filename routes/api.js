@@ -7,9 +7,13 @@ const apiCheckAdmin = require('../api/checkAdmin');
 const apiAdminRegister = require('../api/adminRegister');
 const apiAdminLogin = require('../api/adminLogin');
 const apiCaptcha = require('../api/captcha');
+const apiTagCreate = require('../api/tagCreate');
+const apiTagSearch = require('../api/tagSearch');
 // post
 router.post('/adminregister', apiAdminRegister);
 router.post('/adminlogin', apiAdminLogin);
+router.post('/tagcreate', apiTagCreate);
+router.post('/tagsearch', apiTagSearch);
 
 // get
 router.get('/checkadmin', apiCheckAdmin)

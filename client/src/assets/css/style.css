@@ -280,3 +280,14 @@ input[type=tel], input[type=text],input[type=number],input[type=password]{-webki
 .acgnlist_captcha{
     width: 82px;
 }
+.acgnlist_loading_body{
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 99999;
+}

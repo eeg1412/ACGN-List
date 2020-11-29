@@ -1,6 +1,6 @@
 var jwt = require('jsonwebtoken');
 var chalk = require('chalk');
-const userUtils = require('../mongodb/utils/users');
+const adminUtils = require('../mongodb/utils/admins');
 
 //获取用户IP
 exports.getUserIp = function (req) {
@@ -31,7 +31,7 @@ exports.tokenCheck = async function (token) {
         });
     });
 };
-exports.checkTokenAndAccount = async function (token) {
+exports.checkAdmin = async function (token, IP) {
     let tokenDecode = await this.tokenCheck(token).catch((err) => {
         console.info(
             chalk.yellow('登录信息已失效！')
@@ -40,22 +40,15 @@ exports.checkTokenAndAccount = async function (token) {
     });
     if (!tokenDecode.account) {
         console.info(
-            chalk.yellow('用户登录信息有误！')
+            chalk.yellow('登录信息有误！')
         );
         return false;
     }
     let account = tokenDecode.account;
-    console.info(
-        chalk.green('账户解析结果为' + account)
-    )
     let params = {
         account: account
     }
-    let result = await userUtils.findOne(params).catch((err) => {
-        res.send({
-            code: 0,
-            msg: '内部错误请联系管理员！'
-        });
+    let result = await adminUtils.findOne(params).catch((err) => {
         console.error(
             chalk.red('数据库查询错误！')
         );
@@ -66,7 +59,7 @@ exports.checkTokenAndAccount = async function (token) {
     }
     if ((result.token != token) || (result.token == '')) {
         console.info(
-            chalk.yellow(account + '和数据库的token对不上')
+            chalk.yellow(account + '和数据库的token对不上,IP为：' + IP)
         )
         return false;
     } else {

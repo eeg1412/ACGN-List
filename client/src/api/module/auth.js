@@ -9,6 +9,12 @@ export default function (api) {
     login (data) {
       return api.post('/login', data)
     },
+    tagcreate (data) {
+      return api.post('/tagcreate', data)
+    },
+    tagsearch (data) {
+      return api.post('/tagsearch', data)
+    },
     checkadmin () {
       return api.get('/checkadmin')
     },

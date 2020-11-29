@@ -10,6 +10,11 @@ let methods = {
         sessionStorage.removeItem("adminToken");
         localStorage.removeItem("adminToken");
         return state;
+    },
+    setLoading: (state, action) => {
+        state.loading = action.loading ? true : false;
+        console.log(action);
+        return state;
     }
 }
 
