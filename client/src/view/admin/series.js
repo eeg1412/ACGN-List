@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, Table, message, Modal, Form, Tag, Input, Image, Upload, Pagination } from 'antd';
+import { Button, Table, message, Modal, Form, Tag, Input, Image, Upload, Pagination, Select } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import ReactMarkdown from 'react-markdown/with-html';
@@ -10,6 +10,7 @@ const _ = require('lodash');
 const { TextArea } = Input;
 const { confirm } = Modal;
 const { Search } = Input;
+const { Option } = Select;
 
 const rawForm = {
     _id: '',
@@ -28,19 +29,21 @@ class adminSeries extends Component {
             keyword: '',
             total: 0,
             page: 1,
+            sort: "0",
             timestamp: new Date().getTime(),
             fileList: [],
             cropFile: null,
             cropDialogShow: false,
             editForm: _.cloneDeep(rawForm),
             editModel: false,
+            creatDateSortOrder: 'descend',
             columns: [
                 {
                     title: '封面',
                     key: 'image',
                     width: 82,
                     fixed: 'left',
-                    render: (text, record, index) => <Image className="acgnlist_admin_post_img" src={`/api/cover?type=${record.type}&id=${record._id}&t=${this.state.timestamp}`} alt="封面" />,
+                    render: (text, record, index) => <Image className="acgnlist_admin_post_img" src={`/api/cover?type=${record.type}&id=${record._id}&t=${new Date().getTime()}`} alt="封面" />,
                 },
                 {
                     title: '标题',
@@ -80,7 +83,10 @@ class adminSeries extends Component {
                 {
                     title: '录入时间',
                     dataIndex: 'creatDate',
-                    render: creatDate => <div>{moment(creatDate).format('YYYY年MM月DD日 HH:mm:ss')}</div>
+                    render: creatDate => <div>{moment(creatDate).format('YYYY年MM月DD日 HH:mm:ss')}</div>,
+                    sorter: true,
+                    sortOrder: "descend",
+                    sortDirections: ['descend', 'ascend'],
                 },
                 {
                     title: '操作',
@@ -123,7 +129,8 @@ class adminSeries extends Component {
     searchSeries = () => {
         const params = {
             page: this.state.page,
-            keyword: this.state.keyword
+            keyword: this.state.keyword,
+            sort: this.state.sort
         }
         authApi.seriesSearch(params).then((res) => {
             console.log(res);
@@ -278,12 +285,42 @@ class adminSeries extends Component {
         });
 
     }
+    tableChange = (pagination, filters, sorter, extra) => {
+        const colName = sorter["field"];
+        if (colName === "creatDate") {
+            const sorterType = sorter.order || 'descend';
+            let sortTypeDiv = '0';
+            if (sorterType !== 'descend') {
+                sortTypeDiv = '1';
+            }
+            this.setState({
+                sort: sortTypeDiv
+            }, () => {
+                this.searchSeries();
+                let columns = _.cloneDeep(this.state.columns);
+                const columnsIndex = columns.findIndex((item) => {
+                    return item["dataIndex"] === colName;
+                });
+                if (columnsIndex > -1) {
+                    columns[columnsIndex]["sortOrder"] = sorterType;
+                    this.setState({
+                        columns: columns
+                    });
+                }
+            });
+        }
+
+        console.log('params', pagination, filters, sorter, extra);
+
+    }
     render () {
         return (
             <div>
                 <div className="clearfix">
                     <div className='fl'>
-                        <Search placeholder="输入标题" value={this.state.keyword} onChange={this.onKeywordChange} onSearch={this.onKeywordSearch} />
+                        <div className="dib">
+                            <Search placeholder="输入关键词" value={this.state.keyword} onChange={this.onKeywordChange} onSearch={this.onKeywordSearch} />
+                        </div>
                     </div>
                     <div className="fr">
                         <Button type="primary" onClick={() => this.showModal(rawForm)}>新增</Button>
@@ -291,7 +328,9 @@ class adminSeries extends Component {
                 </div>
                 <div className="mt10">
                     <Table rowKey="_id"
+                        showSorterTooltip={false}
                         bordered
+                        onChange={this.tableChange}
                         columns={this.state.columns}
                         dataSource={this.state.data}
                         scroll={{ x: 1000 }} sticky
