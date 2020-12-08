@@ -293,7 +293,7 @@ class adminComic extends Component {
     inputChange = _.throttle(async (key, e) => {
         const newText = e.target ? e.target.value : e;
         await this.formChange(key, newText);
-    }, 50, {
+    }, 20, {
         leading: true,
         trailing: false
     });

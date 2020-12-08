@@ -53,12 +53,9 @@ class baseFormItem extends Component {
         reader.readAsDataURL(file);
         return false;
     };
-    formChange = _.throttle(async (key, value) => {
+    formChange = async (key, value) => {
         await this.props.formChange(key, value);
-    }, 50, {
-        leading: true,
-        trailing: false
-    });
+    }
     handleCropOk = async (base64) => {
         // console.log(base64);
         this.setState({
@@ -70,11 +67,14 @@ class baseFormItem extends Component {
         console.log(this.state);
     };
 
-    inputChange = async (key, e) => {
+    inputChange = _.throttle(async (key, e) => {
         const newText = e.target ? e.target.value : e;
         console.log(newText);
         await this.formChange(key, newText);
-    }
+    }, 20, {
+        leading: true,
+        trailing: false
+    });
 
     handleCropCancel = e => {
         console.log(e);

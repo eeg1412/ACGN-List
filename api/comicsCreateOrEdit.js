@@ -103,7 +103,7 @@ module.exports = async function (req, res, next) {
         originalName: originalName,//原名
         comment: comment,//点评
         remarks: remarks,//备注
-        seriesId: seriesId,//系列
+        series: seriesId,//系列
         publishingHouse: publishingHouse,//出版社
         status: status,//状态
         progress: progress,//进度
