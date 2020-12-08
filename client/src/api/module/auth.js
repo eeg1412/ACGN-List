@@ -24,6 +24,9 @@ export default function (api) {
     seriesDelete (data) {
       return api.post('/seriesDelete', data)
     },
+    comicsCreateOrEdit (data) {
+      return api.post('/comicsCreateOrEdit', data)
+    },
     checkadmin () {
       return api.get('/checkadmin')
     },

@@ -4,6 +4,8 @@ import { Button, Switch, Form, Input, Upload, Image, Select, Slider, DatePicker,
 import moment from 'moment';
 import 'moment/locale/zh-cn';
 import locale from 'antd/es/date-picker/locale/zh_CN';
+import Series from '../view/admin/series';
+const _ = require('lodash');
 const { Option } = Select;
 const { TextArea } = Input;
 
@@ -15,55 +17,12 @@ class baseFormItem extends Component {
             cropFile: null,
             cropDialogShow: false,
             fileList: [],
-            series: [
-                {
-                    _id: "vxase",
-                    title: "数码宝贝",
-                    creatDate: "2020-11-07T11:50:06.116Z",
-                },
-                {
-                    _id: "vxa",
-                    title: "神奇宝贝",
-                    creatDate: "2020-11-07T11:50:06.116Z",
-                },
-            ],
-            columns: [
-                {
-                    title: '封面',
-                    key: 'image',
-                    width: 82,
-                    render: (text, record, index) => <Image className="acgnlist_admin_post_img" src="https://lain.bgm.tv/pic/cover/c/50/28/298451_AHqgU.jpg" alt="封面" />,
-                },
-                {
-                    title: '标题',
-                    dataIndex: 'title',
-                },
-                {
-                    title: '录入时间',
-                    dataIndex: 'creatDate',
-                    render: creatDate => <div>{moment(creatDate).format('YYYY-MM-DD h:mm:ss')}</div>
-                },
-                {
-                    title: '操作',
-                    fixed: 'right',
-                    width: 72,
-                    key: 'action',
-                    render: (text, record) => <Button type="link" onClick={() => this.selectSeries(record)}>选择</Button>,
-                },
-            ],
         }
     }
     componentDidMount () {
         this.props.onRef(this)
     }
-    selectSeries = async (data) => {
-        console.log(data);
-        await this.formChange('seriesName', data.title);
-        await this.formChange('seriesId', data._id);
-        this.setState({
-            seriesVisible: false,
-        });
-    }
+
     showSeriesModal = () => {
         this.setState({
             seriesVisible: true,
@@ -94,9 +53,12 @@ class baseFormItem extends Component {
         reader.readAsDataURL(file);
         return false;
     };
-    formChange = async (key, value) => {
+    formChange = _.throttle(async (key, value) => {
         await this.props.formChange(key, value);
-    }
+    }, 50, {
+        leading: true,
+        trailing: false
+    });
     handleCropOk = async (base64) => {
         // console.log(base64);
         this.setState({
@@ -125,6 +87,14 @@ class baseFormItem extends Component {
     initSeries = () => {
         // TODO:清空系列数据
         console.log('清空系列数据');
+    }
+    onSeriesSelect = async (record) => {
+        console.log(record);
+        await this.formChange('seriesName', record.title);
+        await this.formChange('seriesId', record._id);
+        this.setState({
+            seriesVisible: false,
+        });
     }
     render () {
         return (
@@ -164,6 +134,7 @@ class baseFormItem extends Component {
                 <Form.Item label="评分">
                     <Slider defaultValue={0} className="acgnlist_admin_edit_slider" value={this.props.editForm.score} onChange={(value) => this.inputChange('score', value)} />
                     <div>{this.props.editForm.score}分</div>
+                    <div className="cGray666 f12">※0分为暂未评分</div>
                 </Form.Item>
                 <Form.Item label="点评">
                     <TextArea rows={4} placeholder="支持Markdown格式" value={this.props.editForm.comment} onChange={(e) => this.inputChange('comment', e)} />
@@ -188,17 +159,13 @@ class baseFormItem extends Component {
                     title="选择系列"
                     centered={true}
                     maskClosable={false}
+                    destroyOnClose={true}
                     visible={this.state.seriesVisible}
                     onOk={this.seriesModalhandleOk}
                     onCancel={this.seriesModalhandleCancel}
+                    footer={[]}
                 >
-                    <div>
-                        <Table rowKey="_id"
-                            bordered
-                            columns={this.state.columns}
-                            dataSource={this.state.series}
-                        />
-                    </div>
+                    <Series selectMode={true} onSelect={this.onSeriesSelect} />
                 </Modal>
             </>
         );

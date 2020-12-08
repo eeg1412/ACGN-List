@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
-import { Button, Table, Switch, Modal, Form, Tag, Slider, Input, Image } from 'antd';
+import { Button, Table, Switch, Modal, Form, Tag, Slider, Input, Image, message } from 'antd';
 import ReactMarkdown from 'react-markdown/with-html';
 import BaseFormItem from '../../components/baseFormItem'
 import EditableTagGroup from '../../components/editableTagGroup'
 import moment from 'moment';
+import { authApi } from "../../api";
 const _ = require('lodash');
 
 const rawForm = {
@@ -126,17 +127,17 @@ class adminComic extends Component {
                 {
                     title: '点评',
                     dataIndex: 'comment',
-                    render: comment => <Button type="link" onClick={() => this.showText(comment, '点评')}>点击查看</Button>,
+                    render: comment => (comment && <Button type="link" onClick={() => this.showText(comment, '点评')}>点击查看</Button>),
                 },
                 {
                     title: '介绍',
                     dataIndex: 'introduce',
-                    render: introduce => <Button type="link" onClick={() => this.showText(introduce, '介绍')}>点击查看</Button>,
+                    render: introduce => (introduce && <Button type="link" onClick={() => this.showText(introduce, '介绍')}>点击查看</Button>),
                 },
                 {
                     title: '备注',
                     dataIndex: 'remarks',
-                    render: remarks => <Button type="link" onClick={() => this.showText(remarks, '备注')}>点击查看</Button>,
+                    render: remarks => (remarks && <Button type="link" onClick={() => this.showText(remarks, '备注')}>点击查看</Button>),
                 },
                 {
                     title: '录入时间',
@@ -238,11 +239,20 @@ class adminComic extends Component {
 
     handleOk = e => {
         console.log(e);
-        this.setState({
-            editModel: false,
-            editForm: _.cloneDeep(rawForm)
+        authApi.comicsCreateOrEdit(this.state.editForm).then((res) => {
+            const code = res.data.code;
+            if (code === 0) {
+                message.error(res.data.msg);
+            } else if (code === 1) {
+                message.success('提交成功');
+                this.setState({
+                    editModel: false,
+                    editForm: _.cloneDeep(rawForm)
+                });
+                this.baseFormItem.initSeries();
+                //TODO:重新获取列表
+            }
         });
-        this.baseFormItem.initSeries()
     };
 
     handleCancel = e => {
@@ -280,11 +290,13 @@ class adminComic extends Component {
             });
         });
     }
-    inputChange = async (key, e) => {
+    inputChange = _.throttle(async (key, e) => {
         const newText = e.target ? e.target.value : e;
-        // console.log(newText);
         await this.formChange(key, newText);
-    }
+    }, 50, {
+        leading: true,
+        trailing: false
+    });
     onTagChange = async (key, tags) => {
         await this.formChange(key, tags);
     }
@@ -328,7 +340,7 @@ class adminComic extends Component {
                             <Form.Item label="原作">
                                 <EditableTagGroup type={"input"} tags={this.state.editForm.original} onTagChange={(tags) => this.onTagChange("original", tags)} />
                             </Form.Item>
-                            <Form.Item label="作者" className="acgnlist-form-item-required">
+                            <Form.Item label="作者">
                                 <EditableTagGroup type={"input"} tags={this.state.editForm.author} onTagChange={(tags) => this.onTagChange("author", tags)} />
                             </Form.Item>
                             <Form.Item label="出版社">

@@ -93,7 +93,11 @@ class adminSeries extends Component {
                     fixed: 'right',
                     width: 100,
                     key: 'action',
-                    render: (text, record) => <div><Button type="link" onClick={() => this.showModal(record)}>修改</Button> <Button type="link" onClick={() => this.showDeleteConfirm(record._id)}>删除</Button></div>,
+                    render: (text, record) => {
+                        const selMode = <div><Button type="link" onClick={() => this.showModal(record)}>修改</Button> <Button type="link" onClick={() => this.sendRecord(record)}>选择</Button></div>
+                        const noSelMode = <div><Button type="link" onClick={() => this.showModal(record)}>修改</Button> <Button type="link" onClick={() => this.showDeleteConfirm(record._id)}>删除</Button></div>
+                        return this.props.selectMode ? selMode : noSelMode;
+                    },
                 },
             ],
             data: [],
@@ -101,6 +105,9 @@ class adminSeries extends Component {
     }
     componentDidMount () {
         this.searchSeries();
+    }
+    sendRecord = (record) => {
+        this.props.onSelect(record);
     }
     showDeleteConfirm = (id) => {
         confirm({
@@ -319,7 +326,7 @@ class adminSeries extends Component {
                 <div className="clearfix">
                     <div className='fl'>
                         <div className="dib">
-                            <Search placeholder="输入关键词" value={this.state.keyword} onChange={this.onKeywordChange} onSearch={this.onKeywordSearch} />
+                            <Search placeholder="输入关键词" style={{ width: '180px' }} value={this.state.keyword} onChange={this.onKeywordChange} onSearch={this.onKeywordSearch} />
                         </div>
                     </div>
                     <div className="fr">

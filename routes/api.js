@@ -13,6 +13,7 @@ const apiSeriesCreateOrEdit = require('../api/seriesCreateOrEdit');
 const apiSeriesSearch = require('../api/seriesSearch');
 const apiSeriesDelete = require('../api/seriesDelete');
 const apiCover = require('../api/cover');
+const apiComicsCreateOrEdit = require('../api/comicsCreateOrEdit');
 
 // post
 router.post('/adminregister', apiAdminRegister);
@@ -22,6 +23,7 @@ router.post('/tagsearch', apiTagSearch);
 router.post('/seriesCreateOrEdit', apiSeriesCreateOrEdit);
 router.post('/seriesSearch', apiSeriesSearch);
 router.post('/seriesDelete', apiSeriesDelete);
+router.post('/comicsCreateOrEdit', apiComicsCreateOrEdit);
 
 
 // get
