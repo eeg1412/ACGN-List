@@ -27,6 +27,9 @@ export default function (api) {
     comicsCreateOrEdit (data) {
       return api.post('/comicsCreateOrEdit', data)
     },
+    comicsSearch (data) {
+      return api.post('/comicsSearch', data)
+    },
     checkadmin () {
       return api.get('/checkadmin')
     },

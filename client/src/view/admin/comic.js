@@ -1,11 +1,14 @@
 import React, { Component } from 'react';
-import { Button, Table, Switch, Modal, Form, Tag, Slider, Input, Image, message } from 'antd';
+import { Button, Table, Switch, Modal, Form, Tag, Slider, Input, Image, message, Pagination, Select } from 'antd';
+import { FilterFilled } from '@ant-design/icons';
 import ReactMarkdown from 'react-markdown/with-html';
 import BaseFormItem from '../../components/baseFormItem'
 import EditableTagGroup from '../../components/editableTagGroup'
+import Filter from '../../components/filter'
 import moment from 'moment';
 import { authApi } from "../../api";
 const _ = require('lodash');
+const { Option } = Select;
 
 const rawForm = {
     _id: '',
@@ -31,11 +34,27 @@ const rawForm = {
     original: [],
     author: [],
 }
-
+const sortOption = (
+    <>
+        <Option value="0">创建时间从新到旧</Option>
+        <Option value="1">创建时间从旧到新</Option>
+        <Option value="2">评分从高到低</Option>
+        <Option value="3">评分从低到高</Option>
+        <Option value="4">进度从高到低</Option>
+        <Option value="5">进度从低到高</Option>
+    </>
+);
 class adminComic extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            filterOpen: false,
+            showMode: '0',
+            keyword: '',
+            sort: "0",
+            total: 0,
+            page: 1,
+            timestamp: new Date().getTime(),
             editForm: _.cloneDeep(rawForm),
 
             editModel: false,
@@ -45,7 +64,7 @@ class adminComic extends Component {
                     key: 'image',
                     width: 82,
                     fixed: 'left',
-                    render: (text, record, index) => <Image className="acgnlist_admin_post_img" src="https://lain.bgm.tv/pic/cover/c/50/28/298451_AHqgU.jpg" alt="封面" />,
+                    render: (text, record, index) => <Image className="acgnlist_admin_post_img" src={`/api/cover?type=${record.type}&id=${record._id}&t=${new Date().getTime()}`} alt="封面" />,
                 },
                 {
                     title: '标题',
@@ -147,12 +166,12 @@ class adminComic extends Component {
                 {
                     title: '开始时间',
                     dataIndex: 'startDate',
-                    render: startDate => <div>{moment(startDate).format('YYYY-MM-DD h:mm:ss')}</div>
+                    render: startDate => <div>{startDate && moment(startDate).format('YYYY-MM-DD h:mm:ss')}</div>
                 },
                 {
                     title: '结束时间',
                     dataIndex: 'endDate',
-                    render: endDate => <div>{moment(endDate).format('YYYY-MM-DD h:mm:ss')}</div>
+                    render: endDate => <div>{endDate && moment(endDate).format('YYYY-MM-DD h:mm:ss')}</div>
                 },
                 {
                     title: '显示',
@@ -169,57 +188,29 @@ class adminComic extends Component {
                     render: (text, record) => <Button type="link" onClick={() => this.showModal(record)}>修改</Button>,
                 },
             ],
-            data: [
-                {
-                    _id: 'a15454as',
-                    series: {
-                        title: "数码宝贝"
-                    },
-                    original: ['原作'],
-                    author: ['作者'],
-                    tag: ['热血', '进化'],
-                    show: true,
-                    publishingHouse: 'Bandai',
-                    title: '数码宝贝大冒险',
-                    originalName: 'デジモンアドベンチャー',
-                    creatDate: "2020-11-07T11:50:06.116Z",
-                    status: "doing",
-                    startDate: "2020-11-07T11:50:06.116Z",
-                    endDate: "2020-11-07T11:50:10.262Z",
-                    tags: [],
-                    progress: 90,
-                    score: 20,
-                    comment: `# 見出し
-测试  
-测试
-                    `,
-                },
-                {
-                    _id: 'a154542as',
-                    series: {
-                        _id: "asassa",
-                        title: "数码宝贝"
-                    },
-                    original: ['原作'],
-                    author: ['作者'],
-                    tag: ['热血', '进化'],
-                    show: true,
-                    publishingHouse: 'Bandai',
-                    title: '数码宝贝大冒险',
-                    originalName: 'デジモンアドベンチャー',
-                    creatDate: "2020-11-07T11:50:06.116Z",
-                    status: "giveUp",
-                    startDate: "2020-11-07T11:50:06.116Z",
-                    endDate: "2020-11-07T11:50:10.262Z",
-                    tags: ['数码宝贝'],
-                    progress: 30,
-                    score: 10,
-                }
-            ],
+            data: [],
         };
 
     }
-
+    componentDidMount () {
+        this.searchComics();
+    }
+    searchComics = () => {
+        const params = {
+            // page: this.state.page,
+            // keyword: this.state.keyword,
+            // sort: this.state.sort
+        }
+        authApi.comicsSearch(params).then((res) => {
+            console.log(res);
+            if (res.data.code === 1) {
+                this.setState({
+                    data: res.data.info.data,
+                    total: res.data.info.total,
+                });
+            }
+        });
+    }
     showModal = (editForm) => {
         let newEditForm = Object.assign({}, _.cloneDeep(rawForm), editForm);
         // 如果有系列数据
@@ -227,9 +218,9 @@ class adminComic extends Component {
             newEditForm["seriesName"] = newEditForm["series"]["title"];
             newEditForm["seriesId"] = newEditForm["series"]["_id"]
         }
-        // 如果有ID为修改,定义一个URL TODO:到时候要改成服务器的图片地址
+        // 如果有ID为修改,定义一个URL 
         if (newEditForm["_id"]) {
-            newEditForm["base64"] = "https://lain.bgm.tv/pic/cover/c/50/28/298451_AHqgU.jpg";
+            newEditForm["base64"] = `/api/cover?type=comic&id=${newEditForm["_id"]}&t=${this.state.timestamp}`;
         }
         this.setState({
             editModel: true,
@@ -238,8 +229,24 @@ class adminComic extends Component {
     };
 
     handleOk = e => {
-        console.log(e);
-        authApi.comicsCreateOrEdit(this.state.editForm).then((res) => {
+        let params = _.cloneDeep(this.state.editForm);
+        if (!this.state.editForm.base64) {
+            message.error('请选择封面');
+            return false;
+        }
+        if (!this.state.editForm.title) {
+            message.error('请填写标题');
+            return false;
+        }
+        if (params.base64.indexOf('/api/cover') !== -1) {
+            params.base64 = '';
+        }
+        if (params['_id']) {
+            params['type'] = 'edit';
+        } else {
+            params['type'] = 'create';
+        }
+        authApi.comicsCreateOrEdit(params).then((res) => {
             const code = res.data.code;
             if (code === 0) {
                 message.error(res.data.msg);
@@ -250,7 +257,8 @@ class adminComic extends Component {
                     editForm: _.cloneDeep(rawForm)
                 });
                 this.baseFormItem.initSeries();
-                //TODO:重新获取列表
+                //重新获取列表
+                this.searchComics();
             }
         });
     };
@@ -303,20 +311,46 @@ class adminComic extends Component {
     onRef = (ref) => {
         this.baseFormItem = ref
     }
+    pageChange = (page) => {
+        this.setState({
+            page: page
+        }, () => {
+            this.searchComics();
+        });
+    }
+    setFilterOpen = () => {
+        this.setState({
+            filterOpen: !this.state.filterOpen
+        });
+    }
+
     render () {
         return (
             <div className="acgnlist_admin_r_body">
                 <div className="clearfix">
+                    <div className="fl"><Button type="primary" icon={<FilterFilled />} onClick={() => this.setFilterOpen()} /></div>
                     <div className="fr">
                         <Button type="primary" onClick={() => this.showModal(rawForm)}>新增</Button>
                     </div>
                 </div>
+                <div style={{ "display": this.state.filterOpen ? 'block' : 'none' }} className="mt10">
+
+                    <Filter sortOption={sortOption} showSelect={true} showMode={this.state.showMode} keyword={this.state.keyword} sort={this.state.sort} />
+                </div>
+
                 <div className="mt10">
                     <Table rowKey="_id"
                         bordered
                         columns={this.state.columns}
                         dataSource={this.state.data} scroll={{ x: 2000 }} sticky
+                        pagination={false}
                     />
+                    <div className="tr mt10">
+                        <Pagination current={this.state.page}
+                            total={this.state.total}
+                            onChange={this.pageChange}
+                            pageSize={20} />
+                    </div>
                 </div>
                 <Modal
                     className="acgnlist_admin_edit_modal"

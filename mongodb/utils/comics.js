@@ -45,10 +45,24 @@ exports.findByKeyWords = async function (params = {}, pageSize_ = 20, page_ = 1,
     let pageSize = pageSize_;
     let page = page_;
     let query = await comicsModel.aggregate([
+        {
+            "$lookup": {
+                "from": "series",
+                "localField": "series",
+                "foreignField": "_id",
+                "as": "series"
+            }
+        },
         // Unwind the source
         {
             "$unwind": {
-                "path": "$tags",
+                "path": "$series",
+                "preserveNullAndEmptyArrays": true
+            }
+        },
+        {
+            "$unwind": {
+                "path": "$series.tags",
                 "preserveNullAndEmptyArrays": true
             }
         },
@@ -56,14 +70,14 @@ exports.findByKeyWords = async function (params = {}, pageSize_ = 20, page_ = 1,
         {
             "$lookup": {
                 "from": "tags",
-                "localField": "tags",
+                "localField": "series.tags",
                 "foreignField": "_id",
-                "as": "tags"
+                "as": "series.tags"
             }
         },
         {
             "$unwind": {
-                "path": "$tags",
+                "path": "$series.tags",
                 "preserveNullAndEmptyArrays": true
             }
         },
@@ -77,9 +91,21 @@ exports.findByKeyWords = async function (params = {}, pageSize_ = 20, page_ = 1,
                 "remarks": { "$first": "$remarks" },
                 "title": { "$first": "$title" },
                 "type": { "$first": "$type" },
-                "tags": { "$push": "$tags" },
+                "series": { "$first": "$series" },
+                "publishingHouse": { "$first": "$publishingHouse" },
+                "status": { "$first": "$status" },
+                "progress": { "$first": "$progress" },
+                "score": { "$first": "$score" },
+                "introduce": { "$first": "$introduce" },
+                "startDate": { "$first": "$startDate" },
+                "endDate": { "$first": "$endDate" },
+                "show": { "$first": "$show" },
+                "original": { "$first": "$original" },
+                "author": { "$first": "$author" },
+                "seriesTags": { "$push": "$series.tags" },
             }
         },
+        { "$unset": "series.tags" },
         { "$match": params },
         { "$sort": sortData },
         {

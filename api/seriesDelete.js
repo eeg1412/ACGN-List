@@ -39,4 +39,6 @@ module.exports = async function (req, res, next) {
         code: 1,
         msg: 'ok'
     });
+
+    // TODO:删除封面图
 };

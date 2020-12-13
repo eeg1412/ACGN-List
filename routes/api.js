@@ -14,6 +14,7 @@ const apiSeriesSearch = require('../api/seriesSearch');
 const apiSeriesDelete = require('../api/seriesDelete');
 const apiCover = require('../api/cover');
 const apiComicsCreateOrEdit = require('../api/comicsCreateOrEdit');
+const apiComicsSearch = require('../api/comicsSearch');
 
 // post
 router.post('/adminregister', apiAdminRegister);
@@ -24,6 +25,8 @@ router.post('/seriesCreateOrEdit', apiSeriesCreateOrEdit);
 router.post('/seriesSearch', apiSeriesSearch);
 router.post('/seriesDelete', apiSeriesDelete);
 router.post('/comicsCreateOrEdit', apiComicsCreateOrEdit);
+router.post('/comicsSearch', apiComicsSearch);
+
 
 
 // get
