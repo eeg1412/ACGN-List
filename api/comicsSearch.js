@@ -10,18 +10,18 @@ module.exports = async function (req, res, next) {
     const sort = String(req.body.sort || '');
     let page = Number(req.body.page || 1);
     // 显示区分，0为全部，1为仅显示，2为仅不显示
-    const showDiv = String(req.body.showDiv || '1');
+    const showMode = String(req.body.showMode || '1');
     if (!_.isInteger(page) || page < 1) {
         page = 1;
     }
-    if (!validator.isInt(showDiv, { min: 0, max: 3 })) {
+    if (!validator.isInt(showMode, { min: 0, max: 3 })) {
         res.send({
             code: 0,
             msg: "显示区分有误！"
         });
         return false;
     }
-    if (showDiv === '0' || showDiv === '2') {
+    if (showMode === '0' || showMode === '2') {
         // 如果为全部或者不显示则需要管理员认证
         const token = req.header('token');
         // 验证token
@@ -46,6 +46,7 @@ module.exports = async function (req, res, next) {
         case '1':
             sortData = { "creatDate": 1 }
             break;
+        // TODO:增加其他排序模式
     }
     // 查询数据
     const params = {};
@@ -58,6 +59,7 @@ module.exports = async function (req, res, next) {
             { "series.title": { $regex: keywordReg } },
         ]
     }
+    // TODO:增加显示模式
     const data = await comicsUtils.findByKeyWords(params, 20, page, '', sortData);
 
     res.send({

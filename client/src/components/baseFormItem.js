@@ -53,8 +53,13 @@ class baseFormItem extends Component {
         reader.readAsDataURL(file);
         return false;
     };
-    formChange = async (key, value) => {
-        await this.props.formChange(key, value);
+    formChange = async (key, value, asyncMode = false) => {
+        if (asyncMode) {
+            await this.props.formChange(key, value, asyncMode);
+        } else {
+            this.props.formChange(key, value, asyncMode);
+        }
+
     }
     handleCropOk = async (base64) => {
         // console.log(base64);
@@ -63,14 +68,14 @@ class baseFormItem extends Component {
             cropDialogShow: false,
             fileList: []
         });
-        await this.formChange('base64', base64);
+        this.formChange('base64', base64);
         console.log(this.state);
     };
 
     inputChange = _.throttle(async (key, e) => {
         const newText = e.target ? e.target.value : e;
         console.log(newText);
-        await this.formChange(key, newText);
+        this.formChange(key, newText);
     }, 20, {
         leading: true,
         trailing: false
@@ -90,8 +95,8 @@ class baseFormItem extends Component {
     }
     onSeriesSelect = async (record) => {
         console.log(record);
-        await this.formChange('seriesName', record.title);
-        await this.formChange('seriesId', record._id);
+        await this.formChange('seriesName', record.title, true);
+        await this.formChange('seriesId', record._id, true);
         this.setState({
             seriesVisible: false,
         });

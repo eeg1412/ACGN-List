@@ -175,7 +175,6 @@ class adminComic extends Component {
                 },
                 {
                     title: '显示',
-                    fixed: 'right',
                     width: 75,
                     dataIndex: 'show',
                     render: show => <Switch checked={show} />,
@@ -197,9 +196,10 @@ class adminComic extends Component {
     }
     searchComics = () => {
         const params = {
-            // page: this.state.page,
-            // keyword: this.state.keyword,
-            // sort: this.state.sort
+            page: this.state.page,
+            keyword: this.state.keyword,
+            sort: this.state.sort,
+            showMode: this.state.showMode
         }
         authApi.comicsSearch(params).then((res) => {
             console.log(res);
@@ -285,28 +285,34 @@ class adminComic extends Component {
             onOk () { },
         });
     }
-    formChange = async (key, value) => {
+    formChange = async (key, value, asyncMode) => {
         let newObj = {};
         newObj[key] = value;
         const editForm = Object.assign({}, this.state.editForm, newObj);
         console.log(editForm, newObj);
-        await new Promise((resolve, reject) => {
+        if (asyncMode) {
+            await new Promise((resolve, reject) => {
+                this.setState({
+                    editForm: editForm
+                }, () => {
+                    resolve('ok')
+                });
+            });
+        } else {
             this.setState({
                 editForm: editForm
-            }, () => {
-                resolve('ok')
             });
-        });
+        }
     }
     inputChange = _.throttle(async (key, e) => {
         const newText = e.target ? e.target.value : e;
-        await this.formChange(key, newText);
+        this.formChange(key, newText);
     }, 20, {
         leading: true,
         trailing: false
     });
     onTagChange = async (key, tags) => {
-        await this.formChange(key, tags);
+        this.formChange(key, tags);
     }
     onRef = (ref) => {
         this.baseFormItem = ref
@@ -323,7 +329,11 @@ class adminComic extends Component {
             filterOpen: !this.state.filterOpen
         });
     }
-
+    filterChange = (params) => {
+        this.setState(params, () => {
+            this.searchComics();
+        });
+    }
     render () {
         return (
             <div className="acgnlist_admin_r_body">
@@ -335,7 +345,7 @@ class adminComic extends Component {
                 </div>
                 <div style={{ "display": this.state.filterOpen ? 'block' : 'none' }} className="mt10">
 
-                    <Filter sortOption={sortOption} showSelect={true} showMode={this.state.showMode} keyword={this.state.keyword} sort={this.state.sort} />
+                    <Filter sortOption={sortOption} showSelect={true} showMode={this.state.showMode} keyword={this.state.keyword} sort={this.state.sort} onSearch={(params) => this.filterChange(params)} onClear={(params) => this.filterChange(params)} />
                 </div>
 
                 <div className="mt10">

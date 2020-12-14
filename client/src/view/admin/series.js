@@ -152,23 +152,29 @@ class adminSeries extends Component {
     onTagChange = async (key, tags) => {
         await this.formChange(key, tags);
     }
-    formChange = async (key, value) => {
+    formChange = async (key, value, asyncMode) => {
         let newObj = {};
         newObj[key] = _.cloneDeep(value);
         const editForm = Object.assign({}, this.state.editForm, newObj);
         console.log(editForm, newObj);
-        await new Promise((resolve, reject) => {
+        if (asyncMode) {
+            await new Promise((resolve, reject) => {
+                this.setState({
+                    editForm: editForm
+                }, () => {
+                    resolve('ok')
+                });
+            });
+        } else {
             this.setState({
                 editForm: editForm
-            }, () => {
-                resolve('ok')
             });
-        });
+        }
     }
     inputChange = async (key, e) => {
         const newText = e.target ? e.target.value : e;
         // console.log(newText);
-        await this.formChange(key, newText);
+        this.formChange(key, newText, false);
     }
     showModal = (editForm) => {
         let newEditForm = Object.assign({}, _.cloneDeep(rawForm), editForm);
