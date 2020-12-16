@@ -48,6 +48,7 @@ class adminComic extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            status: 'all',
             filterOpen: false,
             showMode: '0',
             keyword: '',
@@ -123,9 +124,9 @@ class adminComic extends Component {
                                         return <span>在看</span>
                                     } else if (status === 'want') {
                                         return <span>想看</span>
-                                    } else if (status === 'giveUp') {
+                                    } else if (status === 'out') {
                                         return <span>舍弃</span>
-                                    } else if (status === 'done') {
+                                    } else if (status === 'complete') {
                                         return <span>看完</span>
                                     }
                                 })()
@@ -199,7 +200,8 @@ class adminComic extends Component {
             page: this.state.page,
             keyword: this.state.keyword,
             sort: this.state.sort,
-            showMode: this.state.showMode
+            showMode: this.state.showMode,
+            status: this.state.status
         }
         authApi.comicsSearch(params).then((res) => {
             console.log(res);
@@ -289,7 +291,7 @@ class adminComic extends Component {
         let newObj = {};
         newObj[key] = value;
         const editForm = Object.assign({}, this.state.editForm, newObj);
-        console.log(editForm, newObj);
+        // console.log(editForm, newObj);
         if (asyncMode) {
             await new Promise((resolve, reject) => {
                 this.setState({
@@ -345,7 +347,7 @@ class adminComic extends Component {
                 </div>
                 <div style={{ "display": this.state.filterOpen ? 'block' : 'none' }} className="mt10">
 
-                    <Filter sortOption={sortOption} showSelect={true} showMode={this.state.showMode} keyword={this.state.keyword} sort={this.state.sort} onSearch={(params) => this.filterChange(params)} onClear={(params) => this.filterChange(params)} />
+                    <Filter sortOption={sortOption} showSelect={true} showMode={this.state.showMode} keyword={this.state.keyword} sort={this.state.sort} status={this.state.status} onSearch={(params) => this.filterChange(params)} onClear={(params) => this.filterChange(params)} />
                 </div>
 
                 <div className="mt10">

@@ -11,6 +11,7 @@ module.exports = async function (req, res, next) {
     let page = Number(req.body.page || 1);
     // 显示区分，0为全部，1为仅显示，2为仅不显示
     const showMode = String(req.body.showMode || '1');
+    const status = String(req.body.status || '');
     if (!_.isInteger(page) || page < 1) {
         page = 1;
     }
@@ -18,6 +19,13 @@ module.exports = async function (req, res, next) {
         res.send({
             code: 0,
             msg: "显示区分有误！"
+        });
+        return false;
+    }
+    if (!validator.isInt(sort, { min: 0, max: 5 })) {
+        res.send({
+            code: 0,
+            msg: "排序区分有误！"
         });
         return false;
     }
@@ -46,8 +54,20 @@ module.exports = async function (req, res, next) {
         case '1':
             sortData = { "creatDate": 1 }
             break;
-        // TODO:增加其他排序模式
+        case '2':
+            sortData = { "score": -1 }
+            break;
+        case '3':
+            sortData = { "score": 1 }
+            break;
+        case '4':
+            sortData = { "progress": -1 }
+            break;
+        case '5':
+            sortData = { "progress": 1 }
+            break;
     }
+
     // 查询数据
     const params = {};
     if (keyword) {
@@ -59,7 +79,18 @@ module.exports = async function (req, res, next) {
             { "series.title": { $regex: keywordReg } },
         ]
     }
-    // TODO:增加显示模式
+    // 状态
+    const statusDivList = ['doing', 'want', 'out', 'complete'];
+    if (statusDivList.indexOf(status) !== -1) {
+        params['status'] = status;
+    }
+    switch (showMode) {
+        case '1':
+            params["show"] = true;
+            break;
+        case '2':
+            params["show"] = false;
+    }
     const data = await comicsUtils.findByKeyWords(params, 20, page, '', sortData);
 
     res.send({

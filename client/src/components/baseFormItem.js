@@ -132,8 +132,8 @@ class baseFormItem extends Component {
                     <Select style={{ width: 120 }} value={this.props.editForm.status} onChange={(value) => this.inputChange('status', value)}>
                         <Option value="doing">正在</Option>
                         <Option value="want">想要</Option>
-                        <Option value="giveUp">舍弃</Option>
-                        <Option value="done">完毕</Option>
+                        <Option value="out">舍弃</Option>
+                        <Option value="complete">完毕</Option>
                     </Select>
                 </Form.Item>
                 <Form.Item label="评分">
