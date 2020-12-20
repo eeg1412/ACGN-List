@@ -7,27 +7,19 @@ const validator = require('validator');
 module.exports = async function (req, res, next) {
     // 数据读取
     const keyword = String(req.body.keyword || '');
-    const sort = String(req.body.sort || '');
+    let sort = String(req.body.sort || '0');
     let page = Number(req.body.page || 1);
     // 显示区分，0为全部，1为仅显示，2为仅不显示
-    const showMode = String(req.body.showMode || '1');
+    let showMode = String(req.body.showMode || '1');
     const status = String(req.body.status || '');
     if (!_.isInteger(page) || page < 1) {
         page = 1;
     }
     if (!validator.isInt(showMode, { min: 0, max: 3 })) {
-        res.send({
-            code: 0,
-            msg: "显示区分有误！"
-        });
-        return false;
+        showMode = '1';
     }
     if (!validator.isInt(sort, { min: 0, max: 5 })) {
-        res.send({
-            code: 0,
-            msg: "排序区分有误！"
-        });
-        return false;
+        sort = '0';
     }
     if (showMode === '0' || showMode === '2') {
         // 如果为全部或者不显示则需要管理员认证

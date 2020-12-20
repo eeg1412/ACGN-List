@@ -19,7 +19,6 @@ const rawForm = {
     originalName: '',
     publishingHouse: '',
     status: 'doing',
-    progress: 0,
     // tags: [],
     score: 0,
     comment: '',

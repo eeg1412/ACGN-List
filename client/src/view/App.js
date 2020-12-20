@@ -73,7 +73,7 @@ class app extends React.Component {
             </Switch>
           </Content>
           <Footer>
-            <div className="tc">Powered by <a href="https://www.wikimoe.com" target="_blank">wikimoe</a></div>
+            <div className="tc">Powered by <a rel="noopener noreferrer" href="https://www.wikimoe.com" target="_blank">wikimoe</a></div>
           </Footer>
         </Layout>
       </div>

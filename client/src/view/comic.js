@@ -1,105 +1,153 @@
 import React, { Component } from 'react';
-import { Row, Col, Rate, Divider, Pagination } from 'antd';
+import { Row, Col, Rate, Divider, Pagination, Button, Popover, Select } from 'antd';
 import { withRouter } from 'react-router-dom';
+import { authApi } from "../api";
+import moment from 'moment';
+import { FilterFilled } from '@ant-design/icons';
+import Filter from '../components/filter'
+const { Option } = Select;
+
+const sortOption = (
+    <>
+        <Option value="0">创建时间从新到旧</Option>
+        <Option value="1">创建时间从旧到新</Option>
+        <Option value="2">评分从高到低</Option>
+        <Option value="3">评分从低到高</Option>
+        <Option value="4">进度从高到低</Option>
+        <Option value="5">进度从低到高</Option>
+    </>
+);
 
 class comic extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            current: 'mail',
-            doingList: [
-                {
-                    _id: 'a15454as',
-                    series: {
-                        title: "数码宝贝"
-                    },
-                    type: "anime",
-                    title: '数码宝贝大冒险',
-                    originalName: 'デジモンアドベンチャー',
-                    star: 35,
-                    creatDate: "2020-08-08",
-                    status: "doing",
-                    startDate: "2020-08-08",
-                    endDate: "2020-08-08",
+            doingList: [],
+            wantList: [],
+            outList: [],
+            completeList: [],
+            filterParams: {
+                doing: {
+                    keyword: '',
+                    sort: '0'
                 },
-                {
-                    _id: 'a15454a1',
-                    series: {
-                        title: "数码宝贝"
-                    },
-                    type: "anime",
-                    title: '数码宝贝大冒险',
-                    originalName: 'デジモンアドベンチャー',
-                    star: 35,
-                    creatDate: "2020-08-08",
-                    status: "doing",
-                    startDate: "2020-08-08",
-                    endDate: "2020-08-08",
+                want: {
+                    keyword: '',
+                    sort: '0'
                 },
-                {
-                    _id: 'a15454a2',
-                    series: {
-                        title: "数码宝贝"
-                    },
-                    type: "anime",
-                    title: '数码宝贝大冒险',
-                    originalName: 'デジモンアドベンチャー',
-                    star: 35,
-                    creatDate: "2020-08-08",
-                    status: "doing",
-                    startDate: "2020-08-08",
-                    endDate: "2020-08-08",
+                out: {
+                    keyword: '',
+                    sort: '0'
                 },
-                {
-                    _id: 'a15454a3',
-                    series: {
-                        title: "数码宝贝"
-                    },
-                    type: "anime",
-                    title: '数码宝贝大冒险',
-                    originalName: 'デジモンアドベンチャー',
-                    star: 35,
-                    creatDate: "2020-08-08",
-                    status: "doing",
-                    startDate: "2020-08-08",
-                    endDate: "2020-08-08",
+                complete: {
+                    keyword: '',
+                    sort: '0'
                 },
-                {
-                    _id: 'a15454a4',
-                    series: {
-                        title: "数码宝贝"
-                    },
-                    type: "anime",
-                    title: '数码宝贝大冒险',
-                    originalName: 'デジモンアドベンチャー',
-                    star: 35,
-                    creatDate: "2020-08-08",
-                    status: "doing",
-                    startDate: "2020-08-08",
-                    endDate: "2020-08-08",
-                },
-            ],
+            },
+            page: {
+                doing: 1,
+                want: 1,
+                out: 1,
+                complete: 1,
+            },
+            total: {
+                doing: 1,
+                want: 1,
+                out: 1,
+                complete: 1,
+            }
         };
+    }
+    componentDidMount () {
+        this.searchComics("doing");
+        this.searchComics("want");
+        this.searchComics("out");
+        this.searchComics("complete");
+    }
+    creatNewTotal = (total, status) => {
+        let newTotal = {};
+        newTotal[status] = total;
+        let newTotalObj = Object.assign({}, this.state.total, {});
+        return newTotalObj;
+    }
+    searchComics = (status) => {
+        const params = {
+            page: this.state.page[status],
+            keyword: this.state.filterParams[status].keyword,
+            sort: this.state.filterParams[status].sort,
+            status: status
+        }
+        authApi.comicsSearch(params).then((res) => {
+            console.log(res);
+            let newTotalObj = this.creatNewTotal(res.data.info.total, status);
+            if (res.data.code === 1) {
+                switch (status) {
+                    case "doing":
+                        this.setState({
+                            doingList: res.data.info.data,
+                            total: newTotalObj,
+                        });
+                        break;
+                    case "want":
+                        this.setState({
+                            wantList: res.data.info.data,
+                            total: newTotalObj,
+                        });
+                        break;
+                    case "out":
+                        this.setState({
+                            outList: res.data.info.data,
+                            total: newTotalObj,
+                        });
+                        break;
+                    case "complete":
+                        this.setState({
+                            completeList: res.data.info.data,
+                            total: newTotalObj,
+                        });
+                        break;
+                    default:
+                        break;
+                }
+
+            }
+        });
+    }
+    filterChange () {
+
     }
     render () {
         return (
             <div className="p20 mt5" key="comic">
-                <div>
-                    <h2 className="fb">正在看：</h2>
+                {this.state.doingList.length > 0 && <div>
+                    <div className="clearfix mb10">
+                        <h2 className="fb fl">正在看：</h2>
+                        <div className="fr">
+                            <Popover
+                                content={
+                                    <Filter sortOption={sortOption} showSelect={false} keyword={this.state.filterParams['doing'].keyword} sort={this.state.filterParams['doing'].sort} onSearch={(params) => this.filterChange(params, 'doing')} onClear={(params) => this.filterChange(params, 'doing')} />
+                                }
+                                trigger="click"
+                                placement="bottomRight"
+                            >
+                                <Button type="primary" size="small" icon={<FilterFilled />} />
+                            </Popover>
+                        </div>
+                    </div>
                     <Row gutter={[12, 12]}>
                         {this.state.doingList.map((data) => {
                             return <Col lg={6} md={24} sm={24} xs={24} key={data._id}>
                                 <div className="bangumItem">
                                     <Row>
                                         <Col flex="65px">
-                                            <img alt={data.title} src="https://lain.bgm.tv/pic/cover/c/50/28/298451_AHqgU.jpg" />
+                                            <img alt={data.title} src={`/api/cover?type=${data.type}&id=${data._id}`} />
                                         </Col>
                                         <Col flex="auto">
                                             <div className="textBox">
                                                 <p>{data.title}</p>
-                                                <p>{data.originalName}</p>
-                                                <p>已看50%</p>
-                                                <div><Rate className="acgnlist_rate" disabled allowHalf defaultValue={data.star / 10} /> {data.star / 10}</div>
+                                                <p>{data.originalName || '--'}</p>
+                                                <p>已看{data.progress}%</p>
+                                                <div><Rate className="acgnlist_rate" disabled allowHalf defaultValue={data.score / 20} /> {data.score}分</div>
                                             </div>
                                         </Col>
                                     </Row>
@@ -107,24 +155,38 @@ class comic extends Component {
                             </Col>;
                         })}
                     </Row>
-                </div>
-                <Divider />
-                <div>
-                    <h2 className="fb">想看：</h2>
+                    <div className="tc mt10"><Pagination size="small" total={50} /></div>
+                </div>}
+                {this.state.wantList.length > 0 && <Divider />}
+                {this.state.wantList.length > 0 && <div>
+                    <div className="clearfix mb10">
+                        <h2 className="fb fl">想看：</h2>
+                        <div className="fr">
+                            <Popover
+                                content={
+                                    <Filter sortOption={sortOption} showSelect={false} keyword={this.state.filterParams['want'].keyword} sort={this.state.filterParams['want'].sort} onSearch={(params) => this.filterChange(params, 'want')} onClear={(params) => this.filterChange(params, 'want')} />
+                                }
+                                trigger="click"
+                                placement="bottomRight"
+                            >
+                                <Button type="primary" size="small" icon={<FilterFilled />} />
+                            </Popover>
+                        </div>
+                    </div>
                     <Row gutter={[12, 12]}>
-                        {this.state.doingList.map((data) => {
+                        {this.state.wantList.map((data) => {
                             return <Col lg={6} md={24} sm={24} xs={24} key={data._id}>
                                 <div className="bangumItem">
                                     <Row>
                                         <Col flex="65px">
-                                            <img alt={data.title} src="https://lain.bgm.tv/pic/cover/c/50/28/298451_AHqgU.jpg" />
+                                            <img alt={data.title} src={`/api/cover?type=${data.type}&id=${data._id}`} />
                                         </Col>
                                         <Col flex="auto">
                                             <div className="textBox">
                                                 <p>{data.title}</p>
-                                                <p>{data.originalName}</p>
-                                                <p>于2020年12月12日添加</p>
-                                                <div><Rate className="acgnlist_rate" disabled allowHalf defaultValue={data.star / 10} /> {data.star / 10}</div>
+                                                <p>{data.originalName || '--'}</p>
+                                                <p>于{moment(data.creatDate).format("YYYY年MM月DD日")}添加</p>
+                                                <div><Rate className="acgnlist_rate" disabled allowHalf defaultValue={data.score / 20} /> {data.score}分</div>
                                             </div>
                                         </Col>
                                     </Row>
@@ -132,24 +194,38 @@ class comic extends Component {
                             </Col>;
                         })}
                     </Row>
-                </div>
-                <Divider />
-                <div>
-                    <h2 className="fb">看完：</h2>
+                    <div className="tc mt10"><Pagination size="small" total={50} /></div>
+                </div>}
+                {this.state.completeList.length > 0 && <Divider />}
+                {this.state.completeList.length > 0 && <div>
+                    <div className="clearfix mb10">
+                        <h2 className="fb fl">看完：</h2>
+                        <div className="fr">
+                            <Popover
+                                content={
+                                    <Filter sortOption={sortOption} showSelect={false} keyword={this.state.filterParams['complete'].keyword} sort={this.state.filterParams['complete'].sort} onSearch={(params) => this.filterChange(params, 'complete')} onClear={(params) => this.filterChange(params, 'complete')} />
+                                }
+                                trigger="click"
+                                placement="bottomRight"
+                            >
+                                <Button type="primary" size="small" icon={<FilterFilled />} />
+                            </Popover>
+                        </div>
+                    </div>
                     <Row gutter={[12, 12]}>
-                        {this.state.doingList.map((data) => {
+                        {this.state.completeList.map((data) => {
                             return <Col lg={6} md={24} sm={24} xs={24} key={data._id}>
                                 <div className="bangumItem">
                                     <Row>
                                         <Col flex="65px">
-                                            <img alt={data.title} src="https://lain.bgm.tv/pic/cover/c/50/28/298451_AHqgU.jpg" />
+                                            <img alt={data.title} src={`/api/cover?type=${data.type}&id=${data._id}`} />
                                         </Col>
                                         <Col flex="auto">
                                             <div className="textBox">
                                                 <p>{data.title}</p>
-                                                <p>{data.originalName}</p>
-                                                <p>于2020年12月12日看完</p>
-                                                <div><Rate className="acgnlist_rate" disabled allowHalf defaultValue={data.star / 10} /> {data.star / 10}</div>
+                                                <p>{data.originalName || '--'}</p>
+                                                {data.endDate ? <p>于{moment(data.endDate).format("YYYY年MM月DD日")}看完</p> : '暂未添加看完时间'}
+                                                <div><Rate className="acgnlist_rate" disabled allowHalf defaultValue={data.score / 20} /> {data.score}分</div>
                                             </div>
                                         </Col>
                                     </Row>
@@ -157,25 +233,38 @@ class comic extends Component {
                             </Col>;
                         })}
                     </Row>
-                    <div className="tc mt5"><Pagination size="small" total={50} /></div>
-                </div>
-                <Divider />
-                <div>
-                    <h2 className="fb">弃坑：</h2>
+                    <div className="tc mt10"><Pagination size="small" total={50} /></div>
+                </div>}
+                {this.state.outList.length > 0 && <Divider />}
+                {this.state.outList.length > 0 && <div>
+                    <div className="clearfix mb10">
+                        <h2 className="fb fl">弃坑：</h2>
+                        <div className="fr">
+                            <Popover
+                                content={
+                                    <Filter sortOption={sortOption} showSelect={false} keyword={this.state.filterParams['out'].keyword} sort={this.state.filterParams['out'].sort} onSearch={(params) => this.filterChange(params, 'out')} onClear={(params) => this.filterChange(params, 'out')} />
+                                }
+                                trigger="click"
+                                placement="bottomRight"
+                            >
+                                <Button type="primary" size="small" icon={<FilterFilled />} />
+                            </Popover>
+                        </div>
+                    </div>
                     <Row gutter={[12, 12]}>
-                        {this.state.doingList.map((data) => {
+                        {this.state.outList.map((data) => {
                             return <Col lg={6} md={24} sm={24} xs={24} key={data._id}>
                                 <div className="bangumItem">
                                     <Row>
                                         <Col flex="65px">
-                                            <img alt={data.title} src="https://lain.bgm.tv/pic/cover/c/50/28/298451_AHqgU.jpg" />
+                                            <img alt={data.title} src={`/api/cover?type=${data.type}&id=${data._id}`} />
                                         </Col>
                                         <Col flex="auto">
                                             <div className="textBox">
                                                 <p>{data.title}</p>
-                                                <p>{data.originalName}</p>
-                                                <p>已看50%</p>
-                                                <div><Rate className="acgnlist_rate" disabled allowHalf defaultValue={data.star / 10} /> {data.star / 10}</div>
+                                                <p>{data.originalName || '--'}</p>
+                                                <p>已看{data.progress}%</p>
+                                                <div><Rate className="acgnlist_rate" disabled allowHalf defaultValue={data.score / 20} /> {data.score}分</div>
                                             </div>
                                         </Col>
                                     </Row>
@@ -183,8 +272,8 @@ class comic extends Component {
                             </Col>;
                         })}
                     </Row>
-                    <div className="tc mt5"><Pagination size="small" total={50} /></div>
-                </div>
+                    <div className="tc mt10"><Pagination size="small" total={50} /></div>
+                </div>}
             </div>
         );
     }
