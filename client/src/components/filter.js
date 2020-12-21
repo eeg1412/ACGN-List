@@ -56,7 +56,7 @@ class filter extends Component {
             <>
                 <div className="clearfix">
                     {
-                        this.props.showSelect &&
+                        this.props.showShowSelect &&
                         <div className="fl mr10 mt5 mb5">
                             <Select style={{ width: 130 }} value={this.state.showMode} onChange={(value) => this.onChange(value, 'showMode')}>
                                 <Option value="0">显示与不显示</Option>
@@ -66,7 +66,7 @@ class filter extends Component {
                         </div>
                     }
                     {
-                        this.props.showSelect &&
+                        this.props.showStatusSelect &&
                         <div className="fl mr10 mt5 mb5">
                             <Select style={{ width: 120 }} value={this.state.status} onChange={(value) => this.onChange(value, 'status')}>
                                 <Option value="all">全部状态</Option>

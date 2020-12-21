@@ -346,7 +346,7 @@ class adminComic extends Component {
                 </div>
                 <div style={{ "display": this.state.filterOpen ? 'block' : 'none' }} className="mt10">
 
-                    <Filter sortOption={sortOption} showSelect={true} showMode={this.state.showMode} keyword={this.state.keyword} sort={this.state.sort} status={this.state.status} onSearch={(params) => this.filterChange(params)} onClear={(params) => this.filterChange(params)} />
+                    <Filter sortOption={sortOption} showShowSelect={true} showStatusSelect={true} showMode={this.state.showMode} keyword={this.state.keyword} sort={this.state.sort} status={this.state.status} onSearch={(params) => this.filterChange(params)} onClear={(params) => this.filterChange(params)} />
                 </div>
 
                 <div className="mt10">

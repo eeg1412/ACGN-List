@@ -67,8 +67,14 @@ class comic extends Component {
     creatNewTotal = (total, status) => {
         let newTotal = {};
         newTotal[status] = total;
-        let newTotalObj = Object.assign({}, this.state.total, {});
+        const newTotalObj = Object.assign({}, this.state.total, newTotal);
         return newTotalObj;
+    }
+    creatNewPage = (page, status) => {
+        let newPage = {};
+        newPage[status] = page;
+        const newPageObj = Object.assign({}, this.state.page, newPage);
+        return newPageObj;
     }
     searchComics = (status) => {
         const params = {
@@ -113,8 +119,29 @@ class comic extends Component {
             }
         });
     }
-    filterChange () {
-
+    filterChange = (params, status) => {
+        const { sort, keyword } = params;
+        let newParams = {};
+        newParams[status] = {
+            keyword: keyword,
+            sort: sort
+        }
+        const newParamsObj = Object.assign({}, this.state.filterParams, newParams);
+        const newPageObj = this.creatNewPage(1, status);
+        this.setState({
+            filterParams: newParamsObj,
+            page: newPageObj
+        }, () => {
+            this.searchComics(status);
+        });
+    }
+    pageChange = (page, status) => {
+        const newPageObj = this.creatNewPage(page, status);
+        this.setState({
+            page: newPageObj
+        }, () => {
+            this.searchComics(status);
+        });
     }
     render () {
         return (
@@ -125,7 +152,7 @@ class comic extends Component {
                         <div className="fr">
                             <Popover
                                 content={
-                                    <Filter sortOption={sortOption} showSelect={false} keyword={this.state.filterParams['doing'].keyword} sort={this.state.filterParams['doing'].sort} onSearch={(params) => this.filterChange(params, 'doing')} onClear={(params) => this.filterChange(params, 'doing')} />
+                                    <Filter sortOption={sortOption} showShowSelect={false} showStatusSelect={false} keyword={this.state.filterParams['doing'].keyword} sort={this.state.filterParams['doing'].sort} onSearch={(params) => this.filterChange(params, 'doing')} onClear={(params) => this.filterChange(params, 'doing')} />
                                 }
                                 trigger="click"
                                 placement="bottomRight"
@@ -155,7 +182,7 @@ class comic extends Component {
                             </Col>;
                         })}
                     </Row>
-                    <div className="tc mt10"><Pagination size="small" total={50} /></div>
+                    <div className="tc mt10"><Pagination size="small" pageSize={20} current={this.state.page['doing']} total={this.state.total['doing']} onChange={(page) => this.pageChange(page, 'doing')} /></div>
                 </div>}
                 {this.state.wantList.length > 0 && <Divider />}
                 {this.state.wantList.length > 0 && <div>
@@ -164,7 +191,7 @@ class comic extends Component {
                         <div className="fr">
                             <Popover
                                 content={
-                                    <Filter sortOption={sortOption} showSelect={false} keyword={this.state.filterParams['want'].keyword} sort={this.state.filterParams['want'].sort} onSearch={(params) => this.filterChange(params, 'want')} onClear={(params) => this.filterChange(params, 'want')} />
+                                    <Filter sortOption={sortOption} showShowSelect={false} showStatusSelect={false} keyword={this.state.filterParams['want'].keyword} sort={this.state.filterParams['want'].sort} onSearch={(params) => this.filterChange(params, 'want')} onClear={(params) => this.filterChange(params, 'want')} />
                                 }
                                 trigger="click"
                                 placement="bottomRight"
@@ -194,7 +221,7 @@ class comic extends Component {
                             </Col>;
                         })}
                     </Row>
-                    <div className="tc mt10"><Pagination size="small" total={50} /></div>
+                    <div className="tc mt10"><Pagination size="small" pageSize={20} current={this.state.page['want']} total={this.state.total['want']} onChange={(page) => this.pageChange(page, 'want')} /></div>
                 </div>}
                 {this.state.completeList.length > 0 && <Divider />}
                 {this.state.completeList.length > 0 && <div>
@@ -203,7 +230,7 @@ class comic extends Component {
                         <div className="fr">
                             <Popover
                                 content={
-                                    <Filter sortOption={sortOption} showSelect={false} keyword={this.state.filterParams['complete'].keyword} sort={this.state.filterParams['complete'].sort} onSearch={(params) => this.filterChange(params, 'complete')} onClear={(params) => this.filterChange(params, 'complete')} />
+                                    <Filter sortOption={sortOption} showShowSelect={false} showStatusSelect={false} keyword={this.state.filterParams['complete'].keyword} sort={this.state.filterParams['complete'].sort} onSearch={(params) => this.filterChange(params, 'complete')} onClear={(params) => this.filterChange(params, 'complete')} />
                                 }
                                 trigger="click"
                                 placement="bottomRight"
@@ -233,7 +260,7 @@ class comic extends Component {
                             </Col>;
                         })}
                     </Row>
-                    <div className="tc mt10"><Pagination size="small" total={50} /></div>
+                    <div className="tc mt10"><Pagination size="small" pageSize={20} current={this.state.page['complete']} total={this.state.total['complete']} onChange={(page) => this.pageChange(page, 'complete')} /></div>
                 </div>}
                 {this.state.outList.length > 0 && <Divider />}
                 {this.state.outList.length > 0 && <div>
@@ -242,7 +269,7 @@ class comic extends Component {
                         <div className="fr">
                             <Popover
                                 content={
-                                    <Filter sortOption={sortOption} showSelect={false} keyword={this.state.filterParams['out'].keyword} sort={this.state.filterParams['out'].sort} onSearch={(params) => this.filterChange(params, 'out')} onClear={(params) => this.filterChange(params, 'out')} />
+                                    <Filter sortOption={sortOption} showShowSelect={false} showStatusSelect={false} keyword={this.state.filterParams['out'].keyword} sort={this.state.filterParams['out'].sort} onSearch={(params) => this.filterChange(params, 'out')} onClear={(params) => this.filterChange(params, 'out')} />
                                 }
                                 trigger="click"
                                 placement="bottomRight"
@@ -272,7 +299,7 @@ class comic extends Component {
                             </Col>;
                         })}
                     </Row>
-                    <div className="tc mt10"><Pagination size="small" total={50} /></div>
+                    <div className="tc mt10"><Pagination size="small" pageSize={20} current={this.state.page['out']} total={this.state.total['out']} onChange={(page) => this.pageChange(page, 'out')} /></div>
                 </div>}
             </div>
         );
