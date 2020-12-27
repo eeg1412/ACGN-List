@@ -241,6 +241,11 @@ input[type=tel], input[type=text],input[type=number],input[type=password]{-webki
 .acgnlist_base_detail_body .ant-divider-horizontal{
     margin: 10px 0;
 }
+@media (max-width: 767px){
+    .ant-modal {
+        max-width: calc(100vw - 25px)!important;
+    }
+}
 /* admin */
 .acgnlist_admin_login_body{
     margin: 0 auto;
