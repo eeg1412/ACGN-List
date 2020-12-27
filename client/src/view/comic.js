@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
-import { Row, Col, Rate, Divider, Pagination, Button, Popover, Select } from 'antd';
+import { Row, Col, Rate, Divider, Pagination, Button, Popover, Select, Empty, Modal } from 'antd';
 import { withRouter } from 'react-router-dom';
 import { authApi } from "../api";
 import moment from 'moment';
 import { FilterFilled } from '@ant-design/icons';
 import Filter from '../components/filter'
+import BaseDetailItem from '../components/baseDetailItem'
 const { Option } = Select;
 
 const sortOption = (
@@ -18,10 +19,19 @@ const sortOption = (
     </>
 );
 
+const statusList = {
+    "doing": "正在看",
+    "want": "想看",
+    "out": "看完",
+    "complete": "弃坑",
+}
+
 class comic extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            detailData: null,
+            detailShow: false,
             doingList: [],
             wantList: [],
             outList: [],
@@ -143,10 +153,26 @@ class comic extends Component {
             this.searchComics(status);
         });
     }
+    openDetail = (data) => {
+        this.setState({
+            detailData: data,
+            detailShow: true
+        });
+    }
+    handleCancel = (e) => {
+        this.setState({
+            detailShow: false
+        });
+    }
+    detailAfterClose = () => {
+        this.setState({
+            detailData: null
+        });
+    }
     render () {
         return (
             <div className="p20 mt5" key="comic">
-                {this.state.doingList.length > 0 && <div>
+                <div>
                     <div className="clearfix mb10">
                         <h2 className="fb fl">正在看：</h2>
                         <div className="fr">
@@ -161,31 +187,35 @@ class comic extends Component {
                             </Popover>
                         </div>
                     </div>
-                    <Row gutter={[12, 12]}>
-                        {this.state.doingList.map((data) => {
-                            return <Col lg={6} md={24} sm={24} xs={24} key={data._id}>
-                                <div className="bangumItem">
-                                    <Row>
-                                        <Col flex="65px">
-                                            <img alt={data.title} src={`/api/cover?type=${data.type}&id=${data._id}`} />
-                                        </Col>
-                                        <Col flex="auto">
-                                            <div className="textBox">
-                                                <p>{data.title}</p>
-                                                <p>{data.originalName || '--'}</p>
-                                                <p>已看{data.progress}%</p>
-                                                <div><Rate className="acgnlist_rate" disabled allowHalf defaultValue={data.score / 20} /> {data.score}分</div>
-                                            </div>
-                                        </Col>
-                                    </Row>
-                                </div>
-                            </Col>;
-                        })}
-                    </Row>
-                    <div className="tc mt10"><Pagination size="small" pageSize={20} current={this.state.page['doing']} total={this.state.total['doing']} onChange={(page) => this.pageChange(page, 'doing')} /></div>
-                </div>}
-                {this.state.wantList.length > 0 && <Divider />}
-                {this.state.wantList.length > 0 && <div>
+                    {this.state.doingList.length > 0 ?
+                        <div>
+                            <Row gutter={[12, 12]}>
+                                {this.state.doingList.map((data) => {
+                                    return <Col lg={6} md={24} sm={24} xs={24} key={data._id}>
+                                        <div className="bangumItem" onClick={() => this.openDetail(data)}>
+                                            <Row>
+                                                <Col flex="65px">
+                                                    <img alt={data.title} src={`/api/cover?type=${data.type}&id=${data._id}`} />
+                                                </Col>
+                                                <Col flex="auto">
+                                                    <div className="textBox">
+                                                        <p>{data.title}</p>
+                                                        <p>{data.originalName || '--'}</p>
+                                                        <p>已看{data.progress}%</p>
+                                                        {data.score ? <div><Rate className="acgnlist_rate" disabled allowHalf defaultValue={data.score / 20} /> {data.score}分</div> : <div>暂未评分</div>}
+                                                    </div>
+                                                </Col>
+                                            </Row>
+                                        </div>
+                                    </Col>;
+                                })}
+                            </Row>
+                            <div className="tc mt10"><Pagination size="small" pageSize={20} current={this.state.page['doing']} total={this.state.total['doing']} onChange={(page) => this.pageChange(page, 'doing')} /></div>
+                        </div> :
+                        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />}
+                </div>
+                <Divider />
+                <div>
                     <div className="clearfix mb10">
                         <h2 className="fb fl">想看：</h2>
                         <div className="fr">
@@ -200,31 +230,33 @@ class comic extends Component {
                             </Popover>
                         </div>
                     </div>
-                    <Row gutter={[12, 12]}>
-                        {this.state.wantList.map((data) => {
-                            return <Col lg={6} md={24} sm={24} xs={24} key={data._id}>
-                                <div className="bangumItem">
-                                    <Row>
-                                        <Col flex="65px">
-                                            <img alt={data.title} src={`/api/cover?type=${data.type}&id=${data._id}`} />
-                                        </Col>
-                                        <Col flex="auto">
-                                            <div className="textBox">
-                                                <p>{data.title}</p>
-                                                <p>{data.originalName || '--'}</p>
-                                                <p>于{moment(data.creatDate).format("YYYY年MM月DD日")}添加</p>
-                                                <div><Rate className="acgnlist_rate" disabled allowHalf defaultValue={data.score / 20} /> {data.score}分</div>
-                                            </div>
-                                        </Col>
-                                    </Row>
-                                </div>
-                            </Col>;
-                        })}
-                    </Row>
-                    <div className="tc mt10"><Pagination size="small" pageSize={20} current={this.state.page['want']} total={this.state.total['want']} onChange={(page) => this.pageChange(page, 'want')} /></div>
-                </div>}
-                {this.state.completeList.length > 0 && <Divider />}
-                {this.state.completeList.length > 0 && <div>
+                    {this.state.wantList.length > 0 ? <div>
+                        <Row gutter={[12, 12]}>
+                            {this.state.wantList.map((data) => {
+                                return <Col lg={6} md={24} sm={24} xs={24} key={data._id}>
+                                    <div className="bangumItem" onClick={() => this.openDetail(data)}>
+                                        <Row>
+                                            <Col flex="65px">
+                                                <img alt={data.title} src={`/api/cover?type=${data.type}&id=${data._id}`} />
+                                            </Col>
+                                            <Col flex="auto">
+                                                <div className="textBox">
+                                                    <p>{data.title}</p>
+                                                    <p>{data.originalName || '--'}</p>
+                                                    <p>于{moment(data.creatDate).format("YYYY年MM月DD日")}添加</p>
+                                                    {data.score ? <div><Rate className="acgnlist_rate" disabled allowHalf defaultValue={data.score / 20} /> {data.score}分</div> : <div>暂未评分</div>}
+                                                </div>
+                                            </Col>
+                                        </Row>
+                                    </div>
+                                </Col>;
+                            })}
+                        </Row>
+                        <div className="tc mt10"><Pagination size="small" pageSize={20} current={this.state.page['want']} total={this.state.total['want']} onChange={(page) => this.pageChange(page, 'want')} /></div>
+                    </div> : <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />}
+                </div>
+                <Divider />
+                <div>
                     <div className="clearfix mb10">
                         <h2 className="fb fl">看完：</h2>
                         <div className="fr">
@@ -239,31 +271,33 @@ class comic extends Component {
                             </Popover>
                         </div>
                     </div>
-                    <Row gutter={[12, 12]}>
-                        {this.state.completeList.map((data) => {
-                            return <Col lg={6} md={24} sm={24} xs={24} key={data._id}>
-                                <div className="bangumItem">
-                                    <Row>
-                                        <Col flex="65px">
-                                            <img alt={data.title} src={`/api/cover?type=${data.type}&id=${data._id}`} />
-                                        </Col>
-                                        <Col flex="auto">
-                                            <div className="textBox">
-                                                <p>{data.title}</p>
-                                                <p>{data.originalName || '--'}</p>
-                                                {data.endDate ? <p>于{moment(data.endDate).format("YYYY年MM月DD日")}看完</p> : '暂未添加看完时间'}
-                                                <div><Rate className="acgnlist_rate" disabled allowHalf defaultValue={data.score / 20} /> {data.score}分</div>
-                                            </div>
-                                        </Col>
-                                    </Row>
-                                </div>
-                            </Col>;
-                        })}
-                    </Row>
-                    <div className="tc mt10"><Pagination size="small" pageSize={20} current={this.state.page['complete']} total={this.state.total['complete']} onChange={(page) => this.pageChange(page, 'complete')} /></div>
-                </div>}
-                {this.state.outList.length > 0 && <Divider />}
-                {this.state.outList.length > 0 && <div>
+                    {this.state.completeList.length > 0 ? <div>
+                        <Row gutter={[12, 12]}>
+                            {this.state.completeList.map((data) => {
+                                return <Col lg={6} md={24} sm={24} xs={24} key={data._id}>
+                                    <div className="bangumItem" onClick={() => this.openDetail(data)}>
+                                        <Row>
+                                            <Col flex="65px">
+                                                <img alt={data.title} src={`/api/cover?type=${data.type}&id=${data._id}`} />
+                                            </Col>
+                                            <Col flex="auto">
+                                                <div className="textBox">
+                                                    <p>{data.title}</p>
+                                                    <p>{data.originalName || '--'}</p>
+                                                    {data.endDate ? <p>于{moment(data.endDate).format("YYYY年MM月DD日")}看完</p> : '暂未添加看完时间'}
+                                                    {data.score ? <div><Rate className="acgnlist_rate" disabled allowHalf defaultValue={data.score / 20} /> {data.score}分</div> : <div>暂未评分</div>}
+                                                </div>
+                                            </Col>
+                                        </Row>
+                                    </div>
+                                </Col>;
+                            })}
+                        </Row>
+                        <div className="tc mt10"><Pagination size="small" pageSize={20} current={this.state.page['complete']} total={this.state.total['complete']} onChange={(page) => this.pageChange(page, 'complete')} /></div>
+                    </div> : <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />}
+                </div>
+                <Divider />
+                <div>
                     <div className="clearfix mb10">
                         <h2 className="fb fl">弃坑：</h2>
                         <div className="fr">
@@ -278,29 +312,46 @@ class comic extends Component {
                             </Popover>
                         </div>
                     </div>
-                    <Row gutter={[12, 12]}>
-                        {this.state.outList.map((data) => {
-                            return <Col lg={6} md={24} sm={24} xs={24} key={data._id}>
-                                <div className="bangumItem">
-                                    <Row>
-                                        <Col flex="65px">
-                                            <img alt={data.title} src={`/api/cover?type=${data.type}&id=${data._id}`} />
-                                        </Col>
-                                        <Col flex="auto">
-                                            <div className="textBox">
-                                                <p>{data.title}</p>
-                                                <p>{data.originalName || '--'}</p>
-                                                <p>已看{data.progress}%</p>
-                                                <div><Rate className="acgnlist_rate" disabled allowHalf defaultValue={data.score / 20} /> {data.score}分</div>
-                                            </div>
-                                        </Col>
-                                    </Row>
-                                </div>
-                            </Col>;
-                        })}
-                    </Row>
-                    <div className="tc mt10"><Pagination size="small" pageSize={20} current={this.state.page['out']} total={this.state.total['out']} onChange={(page) => this.pageChange(page, 'out')} /></div>
-                </div>}
+                    {this.state.outList.length > 0 ? <div>
+                        <Row gutter={[12, 12]}>
+                            {this.state.outList.map((data) => {
+                                return <Col lg={6} md={24} sm={24} xs={24} key={data._id}>
+                                    <div className="bangumItem" onClick={() => this.openDetail(data)}>
+                                        <Row>
+                                            <Col flex="65px">
+                                                <img alt={data.title} src={`/api/cover?type=${data.type}&id=${data._id}`} />
+                                            </Col>
+                                            <Col flex="auto">
+                                                <div className="textBox">
+                                                    <p>{data.title}</p>
+                                                    <p>{data.originalName || '--'}</p>
+                                                    <p>已看{data.progress}%</p>
+                                                    {data.score ? <div><Rate className="acgnlist_rate" disabled allowHalf defaultValue={data.score / 20} /> {data.score}分</div> : <div>暂未评分</div>}
+                                                </div>
+                                            </Col>
+                                        </Row>
+                                    </div>
+                                </Col>;
+                            })}
+                        </Row>
+                        <div className="tc mt10"><Pagination size="small" pageSize={20} current={this.state.page['out']} total={this.state.total['out']} onChange={(page) => this.pageChange(page, 'out')} /></div>
+                    </div> : <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />}
+                </div>
+                {this.state.detailData && <Modal
+                    className="acgnlist_detail_modal"
+                    title={this.state.detailData.title}
+                    centered={true}
+                    maskClosable={true}
+                    destroyOnClose={true}
+                    footer={null}
+                    visible={this.state.detailShow}
+                    onCancel={this.handleCancel}
+                    afterClose={this.detailAfterClose}
+                >
+                    <div>
+                        <BaseDetailItem detailData={this.state.detailData} statusList={statusList} />
+                    </div>
+                </Modal>}
             </div>
         );
     }

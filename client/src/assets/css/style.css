@@ -153,6 +153,10 @@ input[type=tel], input[type=text],input[type=number],input[type=password]{-webki
     padding: 5px;
     background-color: #fff;
     color: #14191e;
+    cursor: pointer;
+}
+.acgnlist_mouse_pointer{
+    cursor: pointer;
 }
 .bangumItem:hover{
     color: #14191e;
@@ -218,6 +222,24 @@ input[type=tel], input[type=text],input[type=number],input[type=password]{-webki
 }
 .bangumItem .ant-col{
     width: 10px;
+}
+.acgnlist_detail_modal .ant-modal-title{
+    overflow:hidden;
+    white-space:nowrap;
+    text-overflow:ellipsis;
+    width: 90%;
+}
+.acgnlist_detail_label{
+    text-align: left;
+    font-weight: bold;
+}
+@media (min-width: 576px){
+    .acgnlist_detail_label{
+        text-align: right;
+    }
+}
+.acgnlist_base_detail_body .ant-divider-horizontal{
+    margin: 10px 0;
 }
 /* admin */
 .acgnlist_admin_login_body{
