@@ -91,7 +91,7 @@ class adminSeries extends Component {
                 {
                     title: '操作',
                     fixed: 'right',
-                    width: 100,
+                    width: 65,
                     key: 'action',
                     render: (text, record) => {
                         const selMode = <div><Button type="link" onClick={() => this.showModal(record)}>修改</Button> <Button type="link" onClick={() => this.sendRecord(record)}>选择</Button></div>

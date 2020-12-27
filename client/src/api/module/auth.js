@@ -30,6 +30,9 @@ export default function (api) {
     comicsSearch (data) {
       return api.post('/comicsSearch', data)
     },
+    comicsDelete (data) {
+      return api.post('/comicsDelete', data)
+    },
     checkadmin () {
       return api.get('/checkadmin')
     },

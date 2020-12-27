@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Button, Table, Switch, Modal, Form, Tag, Slider, Input, Image, message, Pagination, Select } from 'antd';
-import { FilterFilled } from '@ant-design/icons';
+import { FilterFilled, ExclamationCircleOutlined } from '@ant-design/icons';
 import ReactMarkdown from 'react-markdown/with-html';
 import BaseFormItem from '../../components/baseFormItem'
 import EditableTagGroup from '../../components/editableTagGroup'
@@ -9,6 +9,7 @@ import moment from 'moment';
 import { authApi } from "../../api";
 const _ = require('lodash');
 const { Option } = Select;
+const { confirm } = Modal;
 
 const rawForm = {
     _id: '',
@@ -184,7 +185,7 @@ class adminComic extends Component {
                     fixed: 'right',
                     width: 65,
                     key: 'action',
-                    render: (text, record) => <Button type="link" onClick={() => this.showModal(record)}>修改</Button>,
+                    render: (text, record) => <div><Button type="link" onClick={() => this.showModal(record)}>修改</Button> <Button type="link" onClick={() => this.showDeleteConfirm(record._id)}>删除</Button></div>,
                 },
             ],
             data: [],
@@ -193,6 +194,30 @@ class adminComic extends Component {
     }
     componentDidMount () {
         this.searchComics();
+    }
+    showDeleteConfirm = (id) => {
+        confirm({
+            title: '是否删除?',
+            icon: <ExclamationCircleOutlined />,
+            content: '删除后将无法恢复！',
+            okText: '是',
+            okType: 'danger',
+            cancelText: '否',
+            onOk: () => {
+                console.log('OK', id);
+                authApi.comicsDelete({ _id: id }).then((res) => {
+                    const code = res.data.code;
+                    if (code === 0) {
+                        message.error(res.data.msg);
+                    } else if (code === 1) {
+                        this.searchComics();
+                    }
+                });
+            },
+            onCancel () {
+                console.log('Cancel');
+            },
+        });
     }
     searchComics = () => {
         const params = {
