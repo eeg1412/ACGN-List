@@ -52,6 +52,7 @@ class baseDetailItem extends Component {
                     </Col>
                 </Row>
                 <Divider />
+                {this.props.detailInfo}
                 <Row>
                     <Col lg={4} md={4} sm={4} xs={24}>
                         <div className="acgnlist_detail_label">状态：</div>
@@ -89,7 +90,7 @@ class baseDetailItem extends Component {
                 {this.props.detailData.introduce && <div>
                     <Row>
                         <Col lg={4} md={4} sm={4} xs={24}>
-                            <div className="acgnlist_detail_label">点评：</div>
+                            <div className="acgnlist_detail_label">介绍：</div>
                         </Col>
                         <Col lg={20} md={20} sm={20} xs={24}>
                             <div>
@@ -105,7 +106,7 @@ class baseDetailItem extends Component {
                 {this.props.detailData.remarks && <div>
                     <Row>
                         <Col lg={4} md={4} sm={4} xs={24}>
-                            <div className="acgnlist_detail_label">点评：</div>
+                            <div className="acgnlist_detail_label">备注：</div>
                         </Col>
                         <Col lg={20} md={20} sm={20} xs={24}>
                             <div>

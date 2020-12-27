@@ -170,6 +170,58 @@ class comic extends Component {
         });
     }
     render () {
+        const detailInfo = (this.state.detailData && <>
+            {this.state.detailData.original.length > 0 && <div>
+                <Row>
+                    <Col lg={4} md={4} sm={4} xs={24}>
+                        <div className="acgnlist_detail_label">原作：</div>
+                    </Col>
+                    <Col lg={20} md={20} sm={20} xs={24}>
+                        {
+                            this.state.detailData.original.map((original, index) => {
+                                return <span className="pr5" key={original + index}>{original}</span>
+                            })
+                        }
+                    </Col>
+                </Row>
+                <Divider />
+            </div>}
+            {this.state.detailData.author.length > 0 && <div>
+                <Row>
+                    <Col lg={4} md={4} sm={4} xs={24}>
+                        <div className="acgnlist_detail_label">作者：</div>
+                    </Col>
+                    <Col lg={20} md={20} sm={20} xs={24}>
+                        {
+                            this.state.detailData.author.map((author, index) => {
+                                return <span className="pr5" key={author + index}>{author}</span>
+                            })
+                        }
+                    </Col>
+                </Row>
+                <Divider />
+            </div>}
+            {this.state.detailData.publishingHouse && <div>
+                <Row>
+                    <Col lg={4} md={4} sm={4} xs={24}>
+                        <div className="acgnlist_detail_label">出版社：</div>
+                    </Col>
+                    <Col lg={20} md={20} sm={20} xs={24}>
+                        <span>{this.state.detailData.publishingHouse}</span>
+                    </Col>
+                </Row>
+                <Divider />
+            </div>}
+            <Row>
+                <Col lg={4} md={4} sm={4} xs={24}>
+                    <div className="acgnlist_detail_label">进度：</div>
+                </Col>
+                <Col lg={20} md={20} sm={20} xs={24}>
+                    <span>{this.state.detailData.progress}%</span>
+                </Col>
+            </Row>
+            <Divider />
+        </>)
         return (
             <div className="p20 mt5" key="comic">
                 <div>
@@ -349,59 +401,8 @@ class comic extends Component {
                     afterClose={this.detailAfterClose}
                 >
                     <div>
-                        <BaseDetailItem detailData={this.state.detailData} statusList={statusList} />
-                        <div className="acgnlist_base_detail_body">
-                            {this.state.detailData.original.length > 0 && <div>
-                                <Row>
-                                    <Col lg={4} md={4} sm={4} xs={24}>
-                                        <div className="acgnlist_detail_label">原作：</div>
-                                    </Col>
-                                    <Col lg={20} md={20} sm={20} xs={24}>
-                                        {
-                                            this.state.detailData.original.map((original, index) => {
-                                                return <span className="pr5" key={original + index}>{original}</span>
-                                            })
-                                        }
-                                    </Col>
-                                </Row>
-                                <Divider />
-                            </div>}
-                            {this.state.detailData.author.length > 0 && <div>
-                                <Row>
-                                    <Col lg={4} md={4} sm={4} xs={24}>
-                                        <div className="acgnlist_detail_label">作者：</div>
-                                    </Col>
-                                    <Col lg={20} md={20} sm={20} xs={24}>
-                                        {
-                                            this.state.detailData.author.map((author, index) => {
-                                                return <span className="pr5" key={author + index}>{author}</span>
-                                            })
-                                        }
-                                    </Col>
-                                </Row>
-                                <Divider />
-                            </div>}
-                            {this.state.detailData.publishingHouse && <div>
-                                <Row>
-                                    <Col lg={4} md={4} sm={4} xs={24}>
-                                        <div className="acgnlist_detail_label">出版社：</div>
-                                    </Col>
-                                    <Col lg={20} md={20} sm={20} xs={24}>
-                                        <span>{this.state.detailData.publishingHouse}</span>
-                                    </Col>
-                                </Row>
-                                <Divider />
-                            </div>}
-                            <Row>
-                                <Col lg={4} md={4} sm={4} xs={24}>
-                                    <div className="acgnlist_detail_label">进度：</div>
-                                </Col>
-                                <Col lg={20} md={20} sm={20} xs={24}>
-                                    <span>{this.state.detailData.progress}%</span>
-                                </Col>
-                            </Row>
-                            <Divider />
-                        </div>
+                        <BaseDetailItem detailData={this.state.detailData} statusList={statusList} detailInfo={detailInfo} />
+
                     </div>
                 </Modal>}
             </div>
