@@ -246,6 +246,17 @@ input[type=tel], input[type=text],input[type=number],input[type=password]{-webki
         max-width: calc(100vw - 25px)!important;
     }
 }
+.acgnlist_baseDetailItem_borderBox{
+    padding: 6px 10px;
+    border: 1px solid #d4d4d4;
+    border-radius: 6px;
+    margin: 8px 6px;
+}
+@media (max-width: 575px){
+    .acgnlist_baseDetailItem_borderBox{
+        margin: 8px 0px;
+    }
+}
 /* admin */
 .acgnlist_admin_login_body{
     margin: 0 auto;

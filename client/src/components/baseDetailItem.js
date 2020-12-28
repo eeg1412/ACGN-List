@@ -74,10 +74,10 @@ class baseDetailItem extends Component {
                 {this.props.detailData.comment && <div>
                     <Row>
                         <Col lg={4} md={4} sm={4} xs={24}>
-                            <div className="acgnlist_detail_label">点评：</div>
+                            <div className="acgnlist_detail_label">个人点评：</div>
                         </Col>
-                        <Col lg={20} md={20} sm={20} xs={24}>
-                            <div>
+                        <Col lg={24} md={24} sm={24} xs={24}>
+                            <div className="acgnlist_baseDetailItem_borderBox">
                                 <ReactMarkdown
                                     source={this.props.detailData.comment}
                                     escapeHtml={false}
@@ -90,10 +90,10 @@ class baseDetailItem extends Component {
                 {this.props.detailData.introduce && <div>
                     <Row>
                         <Col lg={4} md={4} sm={4} xs={24}>
-                            <div className="acgnlist_detail_label">介绍：</div>
+                            <div className="acgnlist_detail_label">作品介绍：</div>
                         </Col>
-                        <Col lg={20} md={20} sm={20} xs={24}>
-                            <div>
+                        <Col lg={24} md={24} sm={24} xs={24}>
+                            <div className="acgnlist_baseDetailItem_borderBox">
                                 <ReactMarkdown
                                     source={this.props.detailData.introduce}
                                     escapeHtml={false}
@@ -106,10 +106,10 @@ class baseDetailItem extends Component {
                 {this.props.detailData.remarks && <div>
                     <Row>
                         <Col lg={4} md={4} sm={4} xs={24}>
-                            <div className="acgnlist_detail_label">备注：</div>
+                            <div className="acgnlist_detail_label">备注信息：</div>
                         </Col>
-                        <Col lg={20} md={20} sm={20} xs={24}>
-                            <div>
+                        <Col lg={24} md={24} sm={24} xs={24}>
+                            <div className="acgnlist_baseDetailItem_borderBox">
                                 <ReactMarkdown
                                     source={this.props.detailData.remarks}
                                     escapeHtml={false}
