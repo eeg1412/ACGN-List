@@ -8,9 +8,11 @@ const fs = require('fs');
 // 删除封面图
 exports.deleteCover = function (type, id) {
     fs.unlink(`./cover/${type}/${id}.jpg`, function (err) {
-        if (err) throw err;
-
-        console.log('已删除封面图');
+        if (err) {
+            console.info(
+                chalk.red(err)
+            );
+        };
     });
 }
 // 基础表单验证

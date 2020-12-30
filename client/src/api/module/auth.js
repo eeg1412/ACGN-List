@@ -57,6 +57,12 @@ export default function (api) {
     gamesCreateOrEdit (data) {
       return api.post('/gamesCreateOrEdit', data)
     },
+    gamesSearch (data) {
+      return api.post('/gamesSearch', data)
+    },
+    gamesDelete (data) {
+      return api.post('/gamesDelete', data)
+    },
     checkadmin () {
       return api.get('/checkadmin')
     },

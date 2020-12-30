@@ -134,6 +134,15 @@ class detailCompent extends Component {
                     }
                 });
                 break;
+            case "game":
+                authApi.gamesSearch(params).then((res) => {
+                    console.log(res);
+                    const newTotalObj = this.creatNewTotal(res.data.info.total, status);
+                    if (res.data.code === 1) {
+                        this.setListData(status, res, newTotalObj);
+                    }
+                });
+                break;
             default:
                 break;
         }
@@ -186,6 +195,9 @@ class detailCompent extends Component {
                 break;
             case "anime":
                 res = data.animeType.name
+                break;
+            case "game":
+                res = data.platform.name
             default:
                 break;
         }
@@ -194,8 +206,9 @@ class detailCompent extends Component {
     progressInfo = (data) => {
         let res = "";
         switch (this.props.type) {
+            case "game":
             case "comic":
-                res = data.progress + "%";
+                res = data.isLongGame ? "长期游戏" : data.progress + "%";
                 break;
             case "anime":
                 res = data.watched + "集";
@@ -325,6 +338,41 @@ class detailCompent extends Component {
                 </>)
                 break;
 
+            case "game":
+                detailInfo = (this.state.detailData && <>
+                    <Row>
+                        <Col lg={4} md={4} sm={4} xs={24}>
+                            <div className="acgnlist_detail_label">游戏平台：</div>
+                        </Col>
+                        <Col lg={20} md={20} sm={20} xs={24}>
+                            <span>{this.state.detailData.platform.name}</span>
+                        </Col>
+                    </Row>
+                    <Divider />
+                    {this.state.detailData.gameCompany && <div>
+                        <Row>
+                            <Col lg={4} md={4} sm={4} xs={24}>
+                                <div className="acgnlist_detail_label">游戏公司：</div>
+                            </Col>
+                            <Col lg={20} md={20} sm={20} xs={24}>
+                                <span>{this.state.detailData.gameCompany}</span>
+                            </Col>
+                        </Row>
+                        <Divider />
+                    </div>}
+                    <Row>
+                        <Col lg={4} md={4} sm={4} xs={24}>
+                            <div className="acgnlist_detail_label">进度：</div>
+                        </Col>
+                        <Col lg={20} md={20} sm={20} xs={24}>
+                            {this.state.detailData.isLongGame ? <span>长期游戏</span> : <span>{this.state.detailData.progress}%</span>}
+                        </Col>
+                    </Row>
+                    <Divider />
+                </>)
+                break;
+
+
             default:
                 break;
         }
@@ -332,7 +380,7 @@ class detailCompent extends Component {
             <div>
                 <div>
                     <div className="clearfix mb10">
-                        <h2 className="fb fl">正在看：</h2>
+                        <h2 className="fb fl">{this.props.statusList["doing"]}：</h2>
                         <div className="fr">
                             <Popover
                                 content={
@@ -375,7 +423,7 @@ class detailCompent extends Component {
                 <Divider />
                 <div>
                     <div className="clearfix mb10">
-                        <h2 className="fb fl">想看：</h2>
+                        <h2 className="fb fl">{this.props.statusList["want"]}：</h2>
                         <div className="fr">
                             <Popover
                                 content={
@@ -416,7 +464,7 @@ class detailCompent extends Component {
                 <Divider />
                 <div>
                     <div className="clearfix mb10">
-                        <h2 className="fb fl">看完：</h2>
+                        <h2 className="fb fl">{this.props.statusList["complete"]}：</h2>
                         <div className="fr">
                             <Popover
                                 content={
@@ -442,7 +490,7 @@ class detailCompent extends Component {
                                                 <div className="textBox">
                                                     <p>{data.title}</p>
                                                     <p>{this.secondInfo(data)}</p>
-                                                    {data.endDate ? <p>于{moment(data.endDate).format("YYYY年MM月DD日")}看完</p> : '暂未添加看完时间'}
+                                                    {data.endDate ? <p>于{moment(data.endDate).format("YYYY年MM月DD日")}{this.props.statusList["complete"]}</p> : '暂未添加看完时间'}
                                                     {data.score ? <div><Rate className="acgnlist_rate" disabled allowHalf defaultValue={data.score / 20} /> {data.score}分</div> : <div>暂未评分</div>}
                                                 </div>
                                             </Col>
@@ -457,7 +505,7 @@ class detailCompent extends Component {
                 <Divider />
                 <div>
                     <div className="clearfix mb10">
-                        <h2 className="fb fl">弃坑：</h2>
+                        <h2 className="fb fl">{this.props.statusList["out"]}：</h2>
                         <div className="fr">
                             <Popover
                                 content={

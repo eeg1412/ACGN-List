@@ -1,28 +1,28 @@
-const gamesModel = require('../models/games');
+const novelsModel = require('../models/novels');
 
 exports.save = async function (params) {
     // document作成
-    const games = new gamesModel(params);
+    const novels = new novelsModel(params);
     // document保存
-    return await games.save();
+    return await novels.save();
 }
 
 
 exports.findOne = async function (params) {
     // document查询
-    return await gamesModel.findOne(params);
+    return await novelsModel.findOne(params);
 }
 
 exports.updateOne = async function (filters, params) {
     // document查询
-    return await gamesModel.updateOne(filters, params);
+    return await novelsModel.updateOne(filters, params);
 }
 
 exports.findInPage = async function (params = {}, pageSize_ = 20, page_ = 1, getParams = '', sortData = { '_id': -1 }) {
     // document查询
     let pageSize = pageSize_;
     let page = page_;
-    let query = gamesModel.find(params, getParams).populate('tags').sort(sortData);
+    let query = novelsModel.find(params, getParams).populate('tags').sort(sortData);
     let total = await query.countDocuments();
     let data = await query
         .find()
@@ -37,27 +37,14 @@ exports.findInPage = async function (params = {}, pageSize_ = 20, page_ = 1, get
 
 exports.deleteOne = async function (params) {
     // document查询
-    return await gamesModel.deleteOne(params);
+    return await novelsModel.deleteOne(params);
 }
 
 exports.findByKeyWords = async function (params = {}, pageSize_ = 20, page_ = 1, getParams = '', sortData = { '_id': -1 }) {
     // document查询
     let pageSize = pageSize_;
     let page = page_;
-    let query = await gamesModel.aggregate([
-        {
-            "$lookup": {
-                "from": "options",
-                "localField": "platform",
-                "foreignField": "_id",
-                "as": "platform"
-            }
-        },
-        {
-            "$unwind": {
-                "path": "$platform",
-            }
-        },
+    let query = await novelsModel.aggregate([
         {
             "$lookup": {
                 "from": "series",
@@ -105,18 +92,17 @@ exports.findByKeyWords = async function (params = {}, pageSize_ = 20, page_ = 1,
                 "title": { "$first": "$title" },
                 "type": { "$first": "$type" },
                 "series": { "$first": "$series" },
+                "publishingHouse": { "$first": "$publishingHouse" },
                 "status": { "$first": "$status" },
+                "progress": { "$first": "$progress" },
                 "score": { "$first": "$score" },
                 "introduce": { "$first": "$introduce" },
                 "startDate": { "$first": "$startDate" },
                 "endDate": { "$first": "$endDate" },
                 "show": { "$first": "$show" },
+                "original": { "$first": "$original" },
+                "author": { "$first": "$author" },
                 "seriesTags": { "$push": "$series.tags" },
-                /*----------以上为共通数据---------*/
-                "platform": { "$first": "$platform" },
-                "gameCompany": { "$first": "$gameCompany" },
-                "isLongGame": { "$first": "$isLongGame" },
-                "progress": { "$first": "$progress" },
             }
         },
         { "$unset": "series.tags" },

@@ -5,6 +5,7 @@ import ReactMarkdown from 'react-markdown/with-html';
 import BaseFormItem from './baseFormItem'
 import EditableTagGroup from './editableTagGroup'
 import Animetype from '../view/admin/animetype'
+import Platform from '../view/admin/platform'
 import Filter from './filter'
 import moment from 'moment';
 import { authApi } from "../api";
@@ -313,6 +314,16 @@ class adminPageCompent extends Component {
                             }
                         });
                         break;
+                    case "game":
+                        authApi.gamesDelete({ _id: id }).then((res) => {
+                            const code = res.data.code;
+                            if (code === 0) {
+                                message.error(res.data.msg);
+                            } else if (code === 1) {
+                                this.searchDataList();
+                            }
+                        });
+                        break;
                     default:
                         break;
                 }
@@ -355,6 +366,18 @@ class adminPageCompent extends Component {
                         });
                     }
                 });
+            case "game":
+                authApi.gamesSearch(params).then((res) => {
+                    console.log(res);
+                    if (res.data.code === 1) {
+                        this.setState({
+                            data: res.data.info.data,
+                            total: res.data.info.total,
+                            timestamp: new Date().getTime(),
+                        });
+                    }
+                });
+                break;
             default:
                 break;
         }
@@ -363,12 +386,12 @@ class adminPageCompent extends Component {
     showModal = (editForm) => {
         let newEditForm = Object.assign({}, _.cloneDeep(this.props.rawForm), editForm);
         switch (this.props.type) {
-            case "game":
-                break;
             case "anime":
                 newEditForm["animeType"] = newEditForm["animeType"]["_id"];
                 break;
-
+            case "game":
+                newEditForm["platform"] = newEditForm["platform"]["_id"];
+                break;
             default:
                 break;
         }
@@ -684,7 +707,8 @@ class adminPageCompent extends Component {
                     onCancel={this.optionsDialogClose}
                 >
                     <div>
-                        <Animetype />
+                        {this.props.type === "anime" && <Animetype />}
+                        {this.props.type === "game" && <Platform />}
                     </div>
                 </Modal>
 
