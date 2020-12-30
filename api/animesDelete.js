@@ -39,5 +39,6 @@ module.exports = async function (req, res, next) {
         msg: 'ok',
     });
 
-    // TODO:删除封面图
+    // 删除封面图
+    utils.deleteCover('anime', _id);
 };

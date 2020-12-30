@@ -37,74 +37,81 @@ class adminSeries extends Component {
             editForm: _.cloneDeep(rawForm),
             editModel: false,
             creatDateSortOrder: 'descend',
-            columns: [
-                {
-                    title: '封面',
-                    key: 'image',
-                    width: 82,
-                    fixed: 'left',
-                    render: (text, record, index) => <Image className="acgnlist_admin_post_img" src={`/api/cover?type=${record.type}&id=${record._id}&t=${new Date().getTime()}`} alt="封面" />,
-                },
-                {
-                    title: '标题',
-                    dataIndex: 'title',
-                },
-                {
-                    title: '原名',
-                    dataIndex: 'originalName',
-                },
-                {
-                    title: '标签',
-                    dataIndex: 'tags',
-                    render: tags => (
-                        <>
-                            {tags.map(tag => {
-                                return (
-                                    <Tag key={tag._id}>
-                                        {tag.name}
-                                    </Tag>
-                                );
-                            })}
-                        </>
-                    ),
-                },
-                {
-                    title: '点评',
-                    dataIndex: 'comment',
-                    width: 100,
-                    render: comment => (comment && <Button type="link" onClick={() => this.showText(comment, '点评')}>点击查看</Button>),
-                },
-                {
-                    title: '备注',
-                    dataIndex: 'remarks',
-                    width: 100,
-                    render: remarks => (remarks && <Button type="link" onClick={() => this.showText(remarks, '备注')}>点击查看</Button>),
-                },
-                {
-                    title: '录入时间',
-                    dataIndex: 'creatDate',
-                    render: creatDate => <div>{moment(creatDate).format('YYYY年MM月DD日 HH:mm:ss')}</div>,
-                    sorter: true,
-                    sortOrder: "descend",
-                    sortDirections: ['descend', 'ascend'],
-                },
-                {
-                    title: '操作',
-                    fixed: 'right',
-                    width: 65,
-                    key: 'action',
-                    render: (text, record) => {
-                        const selMode = <div><Button type="link" onClick={() => this.sendRecord(record)}>选择</Button> <Button type="link" onClick={() => this.showModal(record)}>修改</Button></div>
-                        const noSelMode = <div><Button type="link" onClick={() => this.showModal(record)}>修改</Button> <Button type="link" onClick={() => this.showDeleteConfirm(record._id)}>删除</Button></div>
-                        return this.props.selectMode ? selMode : noSelMode;
-                    },
-                },
-            ],
+            columns: [],
             data: [],
         }
     }
     componentDidMount () {
         this.searchSeries();
+        this.setColumns();
+    }
+    setColumns = () => {
+        const columns = [
+            {
+                title: '封面',
+                key: 'image',
+                width: 82,
+                fixed: 'left',
+                render: (text, record, index) => <Image className="acgnlist_admin_post_img" src={`/api/cover?type=${record.type}&id=${record._id}&t=${new Date().getTime()}`} alt="封面" />,
+            },
+            {
+                title: '标题',
+                dataIndex: 'title',
+            },
+            {
+                title: '原名',
+                dataIndex: 'originalName',
+            },
+            {
+                title: '标签',
+                dataIndex: 'tags',
+                render: tags => (
+                    <>
+                        {tags.map(tag => {
+                            return (
+                                <Tag key={tag._id}>
+                                    {tag.name}
+                                </Tag>
+                            );
+                        })}
+                    </>
+                ),
+            },
+            {
+                title: '点评',
+                dataIndex: 'comment',
+                width: 100,
+                render: comment => (comment && <Button type="link" onClick={() => this.showText(comment, '点评')}>点击查看</Button>),
+            },
+            {
+                title: '备注',
+                dataIndex: 'remarks',
+                width: 100,
+                render: remarks => (remarks && <Button type="link" onClick={() => this.showText(remarks, '备注')}>点击查看</Button>),
+            },
+            {
+                title: '录入时间',
+                dataIndex: 'creatDate',
+                render: creatDate => <div>{moment(creatDate).format('YYYY年MM月DD日 HH:mm:ss')}</div>,
+                sorter: true,
+                sortOrder: "descend",
+                sortDirections: ['descend', 'ascend'],
+            },
+            {
+                title: '操作',
+                fixed: 'right',
+                width: 65,
+                key: 'action',
+                render: (text, record) => {
+                    const selMode = <div><Button type="link" onClick={() => this.sendRecord(record)}>选择</Button> <Button type="link" onClick={() => this.showModal(record)}>修改</Button></div>
+                    const noSelMode = <div><Button type="link" onClick={() => this.showModal(record)}>修改</Button> <Button type="link" onClick={() => this.showDeleteConfirm(record._id)}>删除</Button></div>
+                    return this.props.selectMode ? selMode : noSelMode;
+                },
+            },
+        ]
+        this.setState({
+            columns: columns
+        });
     }
     sendRecord = (record) => {
         this.props.onSelect(record);
@@ -145,6 +152,7 @@ class adminSeries extends Component {
                 this.setState({
                     data: res.data.info.data,
                     total: res.data.info.total,
+                    timestamp: new Date().getTime(),
                 });
             }
         });

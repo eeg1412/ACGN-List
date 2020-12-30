@@ -175,7 +175,7 @@ class adminPageCompent extends Component {
                 key: 'image',
                 width: 82,
                 fixed: 'left',
-                render: (text, record, index) => <Image className="acgnlist_admin_post_img" src={`/api/cover?type=${record.type}&id=${record._id}&t=${new Date().getTime()}`} alt="封面" />,
+                render: (text, record, index) => <Image className="acgnlist_admin_post_img" src={`/api/cover?type=${record.type}&id=${record._id}&t=${this.state.timestamp}`} alt="封面" />,
             },
             {
                 title: '标题',
@@ -323,6 +323,7 @@ class adminPageCompent extends Component {
                         this.setState({
                             data: res.data.info.data,
                             total: res.data.info.total,
+                            timestamp: new Date().getTime(),
                         });
                     }
                 });
@@ -334,6 +335,7 @@ class adminPageCompent extends Component {
                         this.setState({
                             data: res.data.info.data,
                             total: res.data.info.total,
+                            timestamp: new Date().getTime(),
                         });
                     }
                 });
