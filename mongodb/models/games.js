@@ -1,7 +1,7 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 // Schema
-var animes = new Schema({
+var games = new Schema({
     title: { type: String, default: "" },//标题
     originalName: { type: String, default: "" },//原名
     comment: { type: String, default: "" },//点评
@@ -18,16 +18,14 @@ var animes = new Schema({
         type: Date,
         default: Date.now
     },//录入时间
-    // 动画类型
-    animeType: { type: Schema.Types.ObjectId, ref: 'options' },
-    // 原作
-    original: { type: [String], default: [] },
-    // 导演
-    directed: { type: [String], default: [] },
-    // 动画制作
-    animationCompany: { type: String, default: "" },
-    // 已看集数
-    watched: { type: Number, default: 0 },
+    // 平台
+    platform: { type: Schema.Types.ObjectId, ref: 'options' },
+    // 游戏公司
+    gameCompany: { type: String, default: "" },
+    // 长期游戏
+    isLongGame: { type: Boolean, default: false },
+    // 进度
+    progress: { type: Number, default: 0 },
 });
 
-module.exports = mongoose.model('animes', animes);
+module.exports = mongoose.model('games', games);

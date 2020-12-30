@@ -54,6 +54,9 @@ export default function (api) {
     animesDelete (data) {
       return api.post('/animesDelete', data)
     },
+    gamesCreateOrEdit (data) {
+      return api.post('/gamesCreateOrEdit', data)
+    },
     checkadmin () {
       return api.get('/checkadmin')
     },

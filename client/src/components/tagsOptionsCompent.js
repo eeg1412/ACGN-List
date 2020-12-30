@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, Tag, Divider, message, Pagination, Modal, Input } from 'antd';
+import { Button, Tag, Empty, message, Pagination, Modal, Input } from 'antd';
 import {
     CloseOutlined,
     EditOutlined
@@ -175,6 +175,7 @@ class tagsOptionsCompent extends Component {
                     </div>
                 </div>
                 <div className="mt10">
+                    {this.state.list.length === 0 && <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />}
                     {this.state.list.map((data) => {
                         return <Tag color="blue" key={data._id}>{data.name} <EditOutlined className="acgnlist_mouse_pointer" onClick={() => this.showNameInputDialog(data._id, data.name)} /><CloseOutlined className="acgnlist_mouse_pointer acgnlist_icon_ml4" onClick={() => this.deleteContent(data._id)} /></Tag>
                     })}

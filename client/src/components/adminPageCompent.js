@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, Table, Switch, Modal, Form, Tag, Slider, Input, Image, message, Pagination, Select, InputNumber, Radio } from 'antd';
+import { Button, Table, Switch, Modal, Form, Tag, Slider, Input, Image, message, Pagination, Select, InputNumber, Radio, Checkbox } from 'antd';
 import { FilterFilled, ExclamationCircleOutlined } from '@ant-design/icons';
 import ReactMarkdown from 'react-markdown/with-html';
 import BaseFormItem from './baseFormItem'
@@ -162,7 +162,23 @@ class adminPageCompent extends Component {
                     {
                         title: '已看集数',
                         dataIndex: 'watched',
-                        render: progress => <span>{progress}集</span>
+                        render: watched => <span>{watched}集</span>
+                    },
+                ]
+                break;
+            case "game":
+                columsData = [
+                    {
+                        title: '游戏平台',
+                        dataIndex: ["platform", "name"],
+                    },
+                    {
+                        title: '游戏公司',
+                        dataIndex: 'gameCompany',
+                    },
+                    {
+                        title: '进度',
+                        render: (text, record, index) => record.isLongGame ? <span>长期游戏</span> : <span>{record.progress}%</span>,
                     },
                 ]
                 break;
@@ -423,6 +439,22 @@ class adminPageCompent extends Component {
                     }
                 });
                 break;
+            case "game":
+                authApi.gamesCreateOrEdit(params).then((res) => {
+                    const code = res.data.code;
+                    if (code === 0) {
+                        message.error(res.data.msg);
+                    } else if (code === 1) {
+                        message.success('提交成功');
+                        this.setState({
+                            editModel: false
+                        });
+                        this.baseFormItem.initSeries();
+                        //重新获取列表
+                        this.searchDataList();
+                    }
+                });
+                break;
             default:
                 break;
         }
@@ -561,6 +593,28 @@ class adminPageCompent extends Component {
                         </Form.Item>
                     </>
                     break;
+                case "game":
+                    form = <>
+                        <Form.Item label="游戏平台" className="acgnlist-form-item-required">
+                            <Radio.Group onChange={(e) => this.inputChange("platform", e)} value={this.state.editForm.platform}>
+                                {this.state.typeOptions.map((data) => {
+                                    return <Radio value={data._id} key={data._id}>{data.name}</Radio>
+                                })}
+                            </Radio.Group>
+                            <Button size="small" className="acgnlist_option_button" onClick={this.optionsDialogShow}>选项管理</Button>
+                        </Form.Item>
+                        <Form.Item label="游戏公司">
+                            <Input value={this.state.editForm.gameCompany} onChange={(e) => this.inputChange("gameCompany", e)} />
+                        </Form.Item>
+                        <Form.Item label="进度" className="acgnlist-form-item-required">
+                            <div><Checkbox checked={this.state.editForm.isLongGame} onChange={(e) => this.inputChange("isLongGame", e.target.checked)}>长期游戏</Checkbox></div>
+                            {!this.state.editForm.isLongGame && <div>
+                                <Slider value={this.state.editForm.progress} onChange={(value) => this.inputChange("progress", value)} className="acgnlist_admin_edit_slider" />
+                                <div>{this.state.editForm.progress}%</div>
+                            </div>}
+                        </Form.Item>
+                    </>
+                    break;
                 default:
                     break;
             }
@@ -594,7 +648,7 @@ class adminPageCompent extends Component {
                 </div>
                 <Modal
                     className="acgnlist_admin_edit_modal acgnlist_modal"
-                    title="漫画增改"
+                    title="内容编辑"
                     okText="确认"
                     cancelText="取消"
                     destroyOnClose={true}

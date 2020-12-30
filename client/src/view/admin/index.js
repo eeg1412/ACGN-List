@@ -9,6 +9,7 @@ import comic from './comic'
 import game from './game'
 import novel from './novel'
 import animetype from './animetype'
+import gameplatform from './platform'
 
 const { SubMenu } = Menu;
 
@@ -82,6 +83,7 @@ class adminIndex extends Component {
                                     <Route path="/admin/game" exact component={game}></Route>
                                     <Route path="/admin/novel" exact component={novel}></Route>
                                     <Route path="/admin/animetype" exact component={animetype}></Route>
+                                    <Route path="/admin/gameplatform" exact component={gameplatform}></Route>
                                 </Switch>
                             </Content>
                         </Layout>
