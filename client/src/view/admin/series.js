@@ -219,7 +219,6 @@ class adminSeries extends Component {
             } else if (code === 1) {
                 this.setState({
                     editModel: false,
-                    editForm: _.cloneDeep(rawForm),
                     timestamp: new Date().getTime(),
                 });
                 message.success('提交成功');
@@ -228,10 +227,15 @@ class adminSeries extends Component {
         });
     };
 
+    handleAfterClose = () => {
+        this.setState({
+            editForm: _.cloneDeep(rawForm)
+        });
+    }
+
     handleCancel = e => {
         this.setState({
-            editModel: false,
-            editForm: _.cloneDeep(rawForm)
+            editModel: false
         });
     };
     beforeUpload = file => {
@@ -357,15 +361,17 @@ class adminSeries extends Component {
 
                 </div>
                 <Modal
-                    className="acgnlist_admin_edit_modal"
+                    className="acgnlist_admin_edit_modal acgnlist_modal"
                     title="系列增改"
                     okText="确认"
                     cancelText="取消"
+                    destroyOnClose={true}
                     centered={true}
                     maskClosable={false}
                     visible={this.state.editModel}
                     onOk={this.handleOk}
                     onCancel={this.handleCancel}
+                    afterClose={this.handleAfterClose}
                 >
                     <div>
                         <Form

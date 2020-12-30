@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, Table, Switch, Modal, Form, Tag, Slider, Input, Image, message, Pagination, Select } from 'antd';
+import { Button, Table, Switch, Modal, Form, Tag, Slider, Input, Image, message, Pagination, Select, Divider } from 'antd';
 import { FilterFilled, ExclamationCircleOutlined } from '@ant-design/icons';
 import ReactMarkdown from 'react-markdown/with-html';
 import BaseFormItem from './baseFormItem'
@@ -43,7 +43,7 @@ class adminPageCompent extends Component {
     }
     componentDidMount () {
         this.setColumsData();
-        this.searchComics();
+        this.searchDataList();
     }
     setColumsData = () => {
         let columsData = [];
@@ -208,7 +208,7 @@ class adminPageCompent extends Component {
                     if (code === 0) {
                         message.error(res.data.msg);
                     } else if (code === 1) {
-                        this.searchComics();
+                        this.searchDataList();
                     }
                 });
             },
@@ -217,7 +217,7 @@ class adminPageCompent extends Component {
             },
         });
     }
-    searchComics = () => {
+    searchDataList = () => {
         const params = {
             page: this.state.page,
             keyword: this.state.keyword,
@@ -225,15 +225,23 @@ class adminPageCompent extends Component {
             showMode: this.state.showMode,
             status: this.state.status
         }
-        authApi.comicsSearch(params).then((res) => {
-            console.log(res);
-            if (res.data.code === 1) {
-                this.setState({
-                    data: res.data.info.data,
-                    total: res.data.info.total,
+        switch (this.props.type) {
+            case "comic":
+                authApi.comicsSearch(params).then((res) => {
+                    console.log(res);
+                    if (res.data.code === 1) {
+                        this.setState({
+                            data: res.data.info.data,
+                            total: res.data.info.total,
+                        });
+                    }
                 });
-            }
-        });
+                break;
+
+            default:
+                break;
+        }
+
     }
     showModal = (editForm) => {
         let newEditForm = Object.assign({}, _.cloneDeep(this.props.rawForm), editForm);
@@ -277,23 +285,27 @@ class adminPageCompent extends Component {
             } else if (code === 1) {
                 message.success('提交成功');
                 this.setState({
-                    editModel: false,
-                    editForm: _.cloneDeep(this.props.rawForm)
+                    editModel: false
                 });
                 this.baseFormItem.initSeries();
                 //重新获取列表
-                this.searchComics();
+                this.searchDataList();
             }
         });
     };
 
     handleCancel = e => {
         this.setState({
-            editModel: false,
+            editModel: false
+        });
+        this.baseFormItem.initSeries();
+    };
+
+    handleAfterClose = () => {
+        this.setState({
             editForm: _.cloneDeep(this.props.rawForm)
         });
-        this.baseFormItem.initSeries()
-    };
+    }
 
     showText = (text, title) => {
         Modal.info({
@@ -345,7 +357,7 @@ class adminPageCompent extends Component {
         this.setState({
             page: page
         }, () => {
-            this.searchComics();
+            this.searchDataList();
         });
     }
     setFilterOpen = () => {
@@ -355,7 +367,7 @@ class adminPageCompent extends Component {
     }
     filterChange = (params) => {
         this.setState(params, () => {
-            this.searchComics();
+            this.searchDataList();
         });
     }
     render () {
@@ -371,8 +383,8 @@ class adminPageCompent extends Component {
 
                     <Filter sortOption={sortOption} showShowSelect={true} showStatusSelect={true} showMode={this.state.showMode} keyword={this.state.keyword} sort={this.state.sort} status={this.state.status} onSearch={(params) => this.filterChange(params)} onClear={(params) => this.filterChange(params)} />
                 </div>
-
-                <div className="mt10">
+                <Divider />
+                <div>
                     <Table rowKey="_id"
                         bordered
                         columns={this.state.columns}
@@ -387,15 +399,17 @@ class adminPageCompent extends Component {
                     </div>
                 </div>
                 <Modal
-                    className="acgnlist_admin_edit_modal"
+                    className="acgnlist_admin_edit_modal acgnlist_modal"
                     title="漫画增改"
                     okText="确认"
                     cancelText="取消"
+                    destroyOnClose={true}
                     centered={true}
                     maskClosable={false}
                     visible={this.state.editModel}
                     onOk={this.handleOk}
                     onCancel={this.handleCancel}
+                    afterClose={this.handleAfterClose}
                 >
                     <div>
                         <Form

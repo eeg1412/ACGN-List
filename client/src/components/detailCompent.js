@@ -411,7 +411,7 @@ class detailCompent extends Component {
                     </div> : <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />}
                 </div>
                 {this.state.detailData && <Modal
-                    className="acgnlist_detail_modal"
+                    className="acgnlist_detail_modal acgnlist_modal"
                     title={this.state.detailData.title}
                     centered={true}
                     maskClosable={true}

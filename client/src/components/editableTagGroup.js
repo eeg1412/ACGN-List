@@ -249,6 +249,7 @@ export default class editableTagGroup extends Component {
                     const tagName = this.props["type"] === 'tags' ? tag.name : tag;
                     const tagElem = (
                         <Tag
+                            color="blue"
                             className="edit-tag"
                             key={tagName + index}
                             closable={true}

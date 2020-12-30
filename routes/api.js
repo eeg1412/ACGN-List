@@ -16,6 +16,10 @@ const apiCover = require('../api/cover');
 const apiComicsCreateOrEdit = require('../api/comicsCreateOrEdit');
 const apiComicsSearch = require('../api/comicsSearch');
 const apiComicsDelete = require('../api/comicsDelete');
+const apiOptionsCreate = require('../api/optionsCreate');
+const apiOptionsSearch = require('../api/optionsSearch');
+const apiOptionsEdit = require('../api/optionsEdit');
+const apiOptionsDelete = require('../api/optionsDelete');
 
 // post
 router.post('/adminregister', apiAdminRegister);
@@ -28,6 +32,10 @@ router.post('/seriesDelete', apiSeriesDelete);
 router.post('/comicsCreateOrEdit', apiComicsCreateOrEdit);
 router.post('/comicsSearch', apiComicsSearch);
 router.post('/comicsDelete', apiComicsDelete);
+router.post('/optionsCreate', apiOptionsCreate);
+router.post('/optionsSearch', apiOptionsSearch);
+router.post('/optionsEdit', apiOptionsEdit);
+router.post('/optionsDelete', apiOptionsDelete);
 
 
 

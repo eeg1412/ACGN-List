@@ -30,6 +30,7 @@ class crop extends Component {
         return this.props.onOk(base64);
     }
     handleCancel = () => {
+        this.reSetCrop();
         return this.props.onCancel();
     }
 
@@ -73,8 +74,8 @@ class crop extends Component {
             const bili = image.naturalHeight / image.naturalWidth;
             canvas.height = Math.floor(this.cropMaxWidth * bili);
         } else {
-            canvas.width = image.naturalWidth;
-            canvas.height = image.naturalHeight;
+            canvas.width = crop.width * scaleX;
+            canvas.height = crop.height * scaleY;
         }
 
         const ctx = canvas.getContext("2d");
@@ -98,6 +99,7 @@ class crop extends Component {
         return (
             <>
                 <Modal
+                    className="acgnlist_modal"
                     title="选择封面"
                     centered={true}
                     destroyOnClose={true}

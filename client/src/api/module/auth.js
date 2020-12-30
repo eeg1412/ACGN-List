@@ -33,6 +33,18 @@ export default function (api) {
     comicsDelete (data) {
       return api.post('/comicsDelete', data)
     },
+    optionsCreate (data) {
+      return api.post('/optionsCreate', data)
+    },
+    optionsSearch (data) {
+      return api.post('/optionsSearch', data)
+    },
+    optionsEdit (data) {
+      return api.post('/optionsEdit', data)
+    },
+    optionsDelete (data) {
+      return api.post('/optionsDelete', data)
+    },
     checkadmin () {
       return api.get('/checkadmin')
     },

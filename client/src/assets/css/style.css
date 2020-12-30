@@ -137,6 +137,50 @@ input[type=tel], input[type=text],input[type=number],input[type=password]{-webki
 .bdTopCCC{border-top:1px solid #CCCCCC;}
 .bdBottomC9{border-bottom:1px solid #C9C9C9;}
 
+body::-webkit-scrollbar-track-piece {
+    background: #eee
+}
+
+body::-webkit-scrollbar {
+    width: 6px;
+    height: 6px
+}
+
+body::-webkit-scrollbar-thumb {
+    height: 40px;
+    border-radius: 4px;
+    background-color: #A5A5A5
+}
+
+body::-webkit-scrollbar-thumb:hover {
+    background-color: #bbb
+}
+
+
+.acgnlist_modal .ant-modal-body{
+    max-height: calc(100vh - 230px);
+    overflow: auto;
+    min-height: 100px;
+}
+
+.acgnlist_modal .ant-modal-body::-webkit-scrollbar-track-piece {
+    background: #eee
+}
+
+.acgnlist_modal .ant-modal-body::-webkit-scrollbar {
+    width: 6px;
+    height: 6px
+}
+
+.acgnlist_modal .ant-modal-body::-webkit-scrollbar-thumb {
+    height: 40px;
+    border-radius: 4px;
+    background-color: #A5A5A5
+}
+
+.acgnlist_modal .ant-modal-body::-webkit-scrollbar-thumb:hover {
+    background-color: #bbb
+}
 /* acgnlist */
 .acgnlist_body .ant-layout-header{
     background-color: #fff;
@@ -157,6 +201,9 @@ input[type=tel], input[type=text],input[type=number],input[type=password]{-webki
 }
 .acgnlist_mouse_pointer{
     cursor: pointer;
+}
+.acgnlist_icon_ml4{
+    margin-left: 4px!important;
 }
 .bangumItem:hover{
     color: #14191e;

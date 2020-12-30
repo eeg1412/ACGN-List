@@ -16,16 +16,18 @@ module.exports = async function (req, res, next) {
     // const creatDate = req.body.creatDate;//录入时间
     let type = req.body.type;//编辑还是创建
     const seriesId = String(req.body.seriesId || '');//系列
-    const publishingHouse = String(req.body.publishingHouse || '');//出版社
     const status = String(req.body.status || '');//状态
-    const progress = Number(req.body.progress || 0);//进度
     const score = Number(req.body.score || 0);//评分
     const introduce = String(req.body.introduce || '');//介绍
     const startDate = req.body.startDate;//开始时间
     const endDate = req.body.endDate;//结束时间
     const show = req.body.show ? true : false; //是否显示
+    /*-----------------以上为共通----------------*/
+    const animeType = String(req.body.animeType || '');//动画类型
+    const animationCompany = String(req.body.animationCompany || '');//画制作
     let original = req.body.original;//原作
-    let author = req.body.author;//作者
+    let directed = req.body.directed;//导演
+    const watched = Number(req.body.progress || 0);//已看集数
     const token = req.header('token');
     // 校验数据
     if (type !== 'edit') {
@@ -54,7 +56,7 @@ module.exports = async function (req, res, next) {
         });
         return false
     }
-    // 校验漫画表单
+    // 校验动画表单
     // 校验原作数组是否为字符串数组
     if (!_.isArray(original)) {
         res.send({
@@ -67,27 +69,36 @@ module.exports = async function (req, res, next) {
     original.forEach((item, index) => {
         original[index] = String(item);
     });
-    // 校验作者是否为字符串数组
-    if (!_.isArray(author)) {
+    // 校验导演是否为字符串数组
+    if (!_.isArray(directed)) {
         res.send({
             code: 0,
-            msg: "作者数据类型有误！"
+            msg: "导演数据类型有误！"
         });
         return false
     }
-    author = _.uniq(author);
-    author.forEach((item, index) => {
-        author[index] = String(item);
+    directed = _.uniq(directed);
+    directed.forEach((item, index) => {
+        directed[index] = String(item);
     });
-    // 校验进度是否为0-100的正整数
-    const progressString = progress + '';
-    if (!validator.isInt(progressString, { min: 0, max: 100 })) {
+    // 校验已看集数是否为正整数
+    const watched = watched + '';
+    if (!validator.isInt(watched, { min: 0 })) {
         res.send({
             code: 0,
-            msg: "进度数据有误!"
+            msg: "集数数据有误!"
         });
         return false;
     }
+    if (!validator.isMongoId(animeType)) {
+        res.send({
+            code: 0,
+            msg: "动画类型有误!"
+        });
+        return false;
+    }
+    // TODO:检测动画类型是否存在
+
     // 验证token
     const IP = utils.getUserIp(req);
     const adminInfo = await utils.checkAdmin(token, IP);
@@ -110,14 +121,11 @@ module.exports = async function (req, res, next) {
         series: seriesId,//系列
         publishingHouse: publishingHouse,//出版社
         status: status,//状态
-        progress: progress,//进度
         score: score,//评分
         introduce: introduce,//介绍
         startDate: startDate,//开始时间
         endDate: endDate,//结束时间
         show: show, //是否显示
-        original: original,//原作
-        author: author//作者
     }
     let saveData = null;
     if (type === 'edit') {

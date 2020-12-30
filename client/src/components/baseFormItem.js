@@ -161,6 +161,7 @@ class baseFormItem extends Component {
                 </Form.Item>
                 <Crop cropDialogShow={this.state.cropDialogShow} cropFile={this.state.cropFile} onOk={(base64) => this.handleCropOk(base64)} onCancel={() => this.handleCropCancel()} />
                 <Modal
+                    className="acgnlist_modal"
                     title="选择系列"
                     centered={true}
                     maskClosable={false}

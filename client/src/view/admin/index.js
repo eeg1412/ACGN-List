@@ -8,6 +8,7 @@ import anime from './anime'
 import comic from './comic'
 import game from './game'
 import novel from './novel'
+import animetype from './animetype'
 
 const { SubMenu } = Menu;
 
@@ -67,6 +68,9 @@ class adminIndex extends Component {
                                         <Menu.Item key="/admin/comic">漫画</Menu.Item>
                                         <Menu.Item key="/admin/game">游戏</Menu.Item>
                                         <Menu.Item key="/admin/novel">小说</Menu.Item>
+                                        <Menu.Item key="/admin/tags">标签管理</Menu.Item>
+                                        <Menu.Item key="/admin/animetype">动画类型</Menu.Item>
+                                        <Menu.Item key="/admin/gameplatform">游戏平台</Menu.Item>
                                     </Menu>
                                 </div>
                             </Sider>
@@ -77,6 +81,7 @@ class adminIndex extends Component {
                                     <Route path="/admin/comic" exact component={comic}></Route>
                                     <Route path="/admin/game" exact component={game}></Route>
                                     <Route path="/admin/novel" exact component={novel}></Route>
+                                    <Route path="/admin/animetype" exact component={animetype}></Route>
                                 </Switch>
                             </Content>
                         </Layout>
