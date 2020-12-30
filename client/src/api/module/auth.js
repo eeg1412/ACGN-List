@@ -63,6 +63,15 @@ export default function (api) {
     gamesDelete (data) {
       return api.post('/gamesDelete', data)
     },
+    novelsCreateOrEdit (data) {
+      return api.post('/novelsCreateOrEdit', data)
+    },
+    novelsSearch (data) {
+      return api.post('/novelsSearch', data)
+    },
+    novelsDelete (data) {
+      return api.post('/novelsDelete', data)
+    },
     checkadmin () {
       return api.get('/checkadmin')
     },

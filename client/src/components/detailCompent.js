@@ -143,6 +143,15 @@ class detailCompent extends Component {
                     }
                 });
                 break;
+            case "novel":
+                authApi.novelsSearch(params).then((res) => {
+                    console.log(res);
+                    const newTotalObj = this.creatNewTotal(res.data.info.total, status);
+                    if (res.data.code === 1) {
+                        this.setListData(status, res, newTotalObj);
+                    }
+                });
+                break;
             default:
                 break;
         }
@@ -190,6 +199,7 @@ class detailCompent extends Component {
     secondInfo = (data) => {
         let res = "";
         switch (this.props.type) {
+            case "novel":
             case "comic":
                 res = data.originalName || "--";
                 break;
@@ -207,11 +217,14 @@ class detailCompent extends Component {
         let res = "";
         switch (this.props.type) {
             case "game":
+                res = data.isLongGame ? "长期游戏" : "已玩" + data.progress + "%";
+                break;
+            case "novel":
             case "comic":
-                res = data.isLongGame ? "长期游戏" : data.progress + "%";
+                res = "已看" + data.progress + "%";
                 break;
             case "anime":
-                res = data.watched + "集";
+                res = "已看" + data.watched + "集";
             default:
                 break;
         }
@@ -220,6 +233,7 @@ class detailCompent extends Component {
     render () {
         let detailInfo = null;
         switch (this.props.type) {
+            case "novel":
             case "comic":
                 detailInfo = (this.state.detailData && <>
                     {this.state.detailData.original.length > 0 && <div>

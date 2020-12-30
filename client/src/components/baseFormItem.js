@@ -112,7 +112,7 @@ class baseFormItem extends Component {
                         fileList={this.state.fileList}
                         beforeUpload={this.beforeUpload}
                     >
-                        <Button>{this.props.editForm.base64 ? '重新选择' : '选择封面'}</Button>
+                        <Button type={this.props.editForm.base64 ? "default" : "primary"}>{this.props.editForm.base64 ? '重新选择' : '选择封面'}</Button>
                     </Upload>
                     <Input type="hidden" value={this.props.editForm.base64} />
                 </Form.Item>
@@ -123,7 +123,7 @@ class baseFormItem extends Component {
                     <Input value={this.props.editForm.originalName} onChange={(e) => this.inputChange('originalName', e)} />
                 </Form.Item>
                 <Form.Item label="系列" className="acgnlist-form-item-required">
-                    {this.props.editForm.seriesName} <Button onClick={() => { this.showSeriesModal() }}>{this.props.editForm.seriesId ? '重新选择' : '选择系列'}</Button>
+                    {this.props.editForm.seriesName} <Button type={this.props.editForm.seriesId ? "default" : "primary"} onClick={() => { this.showSeriesModal() }}>{this.props.editForm.seriesId ? '重新选择' : '选择系列'}</Button>
                     <Input type="hidden" value={this.props.editForm.seriesId} />
                 </Form.Item>
                 <Form.Item label="状态" className="acgnlist-form-item-required">

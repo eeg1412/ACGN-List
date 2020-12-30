@@ -6,7 +6,7 @@ var novels = new Schema({
     originalName: { type: String, default: "" },//原名
     comment: { type: String, default: "" },//点评
     remarks: { type: String, default: "" },//备注
-    type: { type: String, default: "comic" },//类型
+    type: { type: String, default: "novel" },//类型
     series: { type: Schema.Types.ObjectId, ref: 'series' },//系列
     publishingHouse: { type: String, default: "" },//出版社
     status: { type: String, default: "doing" },//状态

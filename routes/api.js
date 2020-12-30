@@ -26,6 +26,9 @@ const apiAnimesDelete = require('../api/animesDelete');
 const apiGamesCreateOrEdit = require('../api/gamesCreateOrEdit');
 const apiGamesSearch = require('../api/gamesSearch');
 const apiGamesDelete = require('../api/gamesDelete');
+const apiNovelsCreateOrEdit = require('../api/novelsCreateOrEdit');
+const apiNovelsSearch = require('../api/novelsSearch');
+const apiNovelsDelete = require('../api/novelsDelete');
 
 // post
 router.post('/adminregister', apiAdminRegister);
@@ -48,6 +51,9 @@ router.post('/animesDelete', apiAnimesDelete);
 router.post('/gamesCreateOrEdit', apiGamesCreateOrEdit);
 router.post('/gamesSearch', apiGamesSearch);
 router.post('/gamesDelete', apiGamesDelete);
+router.post('/novelsCreateOrEdit', apiNovelsCreateOrEdit);
+router.post('/novelsSearch', apiNovelsSearch);
+router.post('/novelsDelete', apiNovelsDelete);
 
 
 

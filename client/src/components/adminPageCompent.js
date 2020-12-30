@@ -77,6 +77,7 @@ class adminPageCompent extends Component {
     setColumsData = () => {
         let columsData = [];
         switch (this.props.type) {
+            case "novel":
             case "comic":
                 columsData = [
                     {
@@ -324,6 +325,15 @@ class adminPageCompent extends Component {
                             }
                         });
                         break;
+                    case "novel":
+                        authApi.novelsDelete({ _id: id }).then((res) => {
+                            const code = res.data.code;
+                            if (code === 0) {
+                                message.error(res.data.msg);
+                            } else if (code === 1) {
+                                this.searchDataList();
+                            }
+                        });
                     default:
                         break;
                 }
@@ -368,6 +378,18 @@ class adminPageCompent extends Component {
                 });
             case "game":
                 authApi.gamesSearch(params).then((res) => {
+                    console.log(res);
+                    if (res.data.code === 1) {
+                        this.setState({
+                            data: res.data.info.data,
+                            total: res.data.info.total,
+                            timestamp: new Date().getTime(),
+                        });
+                    }
+                });
+                break;
+            case "novel":
+                authApi.novelsSearch(params).then((res) => {
                     console.log(res);
                     if (res.data.code === 1) {
                         this.setState({
@@ -464,6 +486,22 @@ class adminPageCompent extends Component {
                 break;
             case "game":
                 authApi.gamesCreateOrEdit(params).then((res) => {
+                    const code = res.data.code;
+                    if (code === 0) {
+                        message.error(res.data.msg);
+                    } else if (code === 1) {
+                        message.success('提交成功');
+                        this.setState({
+                            editModel: false
+                        });
+                        this.baseFormItem.initSeries();
+                        //重新获取列表
+                        this.searchDataList();
+                    }
+                });
+                break;
+            case "novel":
+                authApi.novelsCreateOrEdit(params).then((res) => {
                     const code = res.data.code;
                     if (code === 0) {
                         message.error(res.data.msg);
@@ -575,6 +613,7 @@ class adminPageCompent extends Component {
         const otherForm = () => {
             let form = <></>;
             switch (this.props.type) {
+                case "novel":
                 case "comic":
                     form = <>
                         <Form.Item label="原作">
