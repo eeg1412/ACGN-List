@@ -1,4 +1,5 @@
-const comicsUtils = require('../mongodb/utils/comics');
+const animesUtils = require('../mongodb/utils/animes');
+const optionsUtils = require('../mongodb/utils/options');
 const utils = require('../utils/utils');
 var chalk = require('chalk');
 const validator = require('validator');
@@ -27,7 +28,7 @@ module.exports = async function (req, res, next) {
     const animationCompany = String(req.body.animationCompany || '');//画制作
     let original = req.body.original;//原作
     let directed = req.body.directed;//导演
-    const watched = Number(req.body.progress || 0);//已看集数
+    const watched = Number(req.body.watched || 0);//已看集数
     const token = req.header('token');
     // 校验数据
     if (type !== 'edit') {
@@ -82,14 +83,15 @@ module.exports = async function (req, res, next) {
         directed[index] = String(item);
     });
     // 校验已看集数是否为正整数
-    const watched = watched + '';
-    if (!validator.isInt(watched, { min: 0 })) {
+    const watchedStr = watched + '';
+    if (!validator.isInt(watchedStr, { min: 0 })) {
         res.send({
             code: 0,
             msg: "集数数据有误!"
         });
         return false;
     }
+    // 检测动画类型ID
     if (!validator.isMongoId(animeType)) {
         res.send({
             code: 0,
@@ -97,7 +99,6 @@ module.exports = async function (req, res, next) {
         });
         return false;
     }
-    // TODO:检测动画类型是否存在
 
     // 验证token
     const IP = utils.getUserIp(req);
@@ -112,6 +113,24 @@ module.exports = async function (req, res, next) {
         );
         return false;
     }
+
+    // 检测动画类型是否存在
+    const animeTypeParams = {
+        _id: animeType,
+        type: 'anime'
+    }
+    const options = await optionsUtils.findOne(animeTypeParams);
+    if (!options) {
+        res.send({
+            code: 0,
+            msg: '动画类型不存在!'
+        });
+        console.error(
+            chalk.yellow('创建动画,动画类型不存在!')
+        );
+        return false;
+    }
+
     // 写入数据
     const saveParams = {
         title: title,//标题
@@ -119,29 +138,34 @@ module.exports = async function (req, res, next) {
         comment: comment,//点评
         remarks: remarks,//备注
         series: seriesId,//系列
-        publishingHouse: publishingHouse,//出版社
         status: status,//状态
         score: score,//评分
         introduce: introduce,//介绍
         startDate: startDate,//开始时间
         endDate: endDate,//结束时间
         show: show, //是否显示
+        /*-----------------以上为共通----------------*/
+        animeType: animeType,
+        original: original,
+        directed: directed,
+        animationCompany: animationCompany,
+        watched: watched
     }
     let saveData = null;
     if (type === 'edit') {
-        await comicsUtils.updateOne({ _id: _id }, saveParams);
+        await animesUtils.updateOne({ _id: _id }, saveParams);
     } else {
-        saveData = await comicsUtils.save(saveParams);
+        saveData = await animesUtils.save(saveParams);
     }
     // console.log(seriesData);
     // 写入封面文件
     if (base64) {
         if (saveData) {
             const base64Data = base64.replace(/^data:image\/jpeg;base64,/, "");
-            fs.writeFileSync(`./cover/comic/${saveData._id}.jpg`, base64Data, 'base64');
+            fs.writeFileSync(`./cover/anime/${saveData._id}.jpg`, base64Data, 'base64');
         } else {
             const base64Data = base64.replace(/^data:image\/jpeg;base64,/, "");
-            fs.writeFileSync(`./cover/comic/${_id}.jpg`, base64Data, 'base64');
+            fs.writeFileSync(`./cover/anime/${_id}.jpg`, base64Data, 'base64');
         }
 
     }

@@ -44,6 +44,8 @@ module.exports = async function (req, res, next) {
         );
         return false;
     }
+    // TODO:判断选项是否被占用
+
     // 写入数据
     const deleteParams = {
         _id: id,

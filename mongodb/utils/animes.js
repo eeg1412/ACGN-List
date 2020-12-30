@@ -47,6 +47,19 @@ exports.findByKeyWords = async function (params = {}, pageSize_ = 20, page_ = 1,
     let query = await animesModel.aggregate([
         {
             "$lookup": {
+                "from": "options",
+                "localField": "animeType",
+                "foreignField": "_id",
+                "as": "animeType"
+            }
+        },
+        {
+            "$unwind": {
+                "path": "$animeType",
+            }
+        },
+        {
+            "$lookup": {
                 "from": "series",
                 "localField": "series",
                 "foreignField": "_id",
@@ -92,17 +105,19 @@ exports.findByKeyWords = async function (params = {}, pageSize_ = 20, page_ = 1,
                 "title": { "$first": "$title" },
                 "type": { "$first": "$type" },
                 "series": { "$first": "$series" },
-                "publishingHouse": { "$first": "$publishingHouse" },
                 "status": { "$first": "$status" },
-                "progress": { "$first": "$progress" },
                 "score": { "$first": "$score" },
                 "introduce": { "$first": "$introduce" },
                 "startDate": { "$first": "$startDate" },
                 "endDate": { "$first": "$endDate" },
                 "show": { "$first": "$show" },
-                "original": { "$first": "$original" },
-                "author": { "$first": "$author" },
                 "seriesTags": { "$push": "$series.tags" },
+                /*----------以上为共通数据---------*/
+                "animeType": { "$first": "$animeType" },
+                "original": { "$first": "$original" },
+                "directed": { "$first": "$directed" },
+                "animationCompany": { "$first": "$animationCompany" },
+                "watched": { "$first": "$watched" },
             }
         },
         { "$unset": "series.tags" },

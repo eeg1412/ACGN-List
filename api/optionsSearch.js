@@ -8,6 +8,7 @@ module.exports = async function (req, res, next) {
     // 数据读取
     const optionsType = String(req.body.optionsType) || '';
     let page = Number(req.body.page || 1);
+    const searchAll = req.body.searchAll ? true : false;
     const token = req.header('token');
     if (!_.isInteger(page) || page < 1) {
         page = 1;
@@ -39,7 +40,12 @@ module.exports = async function (req, res, next) {
     const params = {
         type: optionsType
     };
-    const optionsData = await optionsUtils.findInPage(params, 20, page);
+    let optionsData = {};
+    if (searchAll) {
+        optionsData['data'] = await optionsUtils.findMany(params);
+    } else {
+        optionsData = await optionsUtils.findInPage(params, 20, page);
+    }
     res.send({
         code: 1,
         options: optionsData,

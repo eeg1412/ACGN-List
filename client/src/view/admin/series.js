@@ -94,7 +94,7 @@ class adminSeries extends Component {
                     width: 65,
                     key: 'action',
                     render: (text, record) => {
-                        const selMode = <div><Button type="link" onClick={() => this.showModal(record)}>修改</Button> <Button type="link" onClick={() => this.sendRecord(record)}>选择</Button></div>
+                        const selMode = <div><Button type="link" onClick={() => this.sendRecord(record)}>选择</Button> <Button type="link" onClick={() => this.showModal(record)}>修改</Button></div>
                         const noSelMode = <div><Button type="link" onClick={() => this.showModal(record)}>修改</Button> <Button type="link" onClick={() => this.showDeleteConfirm(record._id)}>删除</Button></div>
                         return this.props.selectMode ? selMode : noSelMode;
                     },
@@ -178,7 +178,7 @@ class adminSeries extends Component {
     }
     showModal = (editForm) => {
         let newEditForm = Object.assign({}, _.cloneDeep(rawForm), editForm);
-        // 如果有ID为修改,定义一个URL TODO:到时候要改成服务器的图片地址
+        // 如果有ID为修改
         if (newEditForm["_id"]) {
             newEditForm["base64"] = `/api/cover?type=series&id=${newEditForm["_id"]}&t=${this.state.timestamp}`;
         }
@@ -350,7 +350,7 @@ class adminSeries extends Component {
                         onChange={this.tableChange}
                         columns={this.state.columns}
                         dataSource={this.state.data}
-                        scroll={{ x: 1000 }} sticky
+                        scroll={{ x: 1000 }} sticky={false}
                         pagination={false} />
                     <div className="tr mt10">
                         <Pagination current={this.state.page}

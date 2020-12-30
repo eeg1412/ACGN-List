@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
-import { Button, Table, Switch, Modal, Form, Tag, Slider, Input, Image, message, Pagination, Select, Divider } from 'antd';
+import { Button, Table, Switch, Modal, Form, Tag, Slider, Input, Image, message, Pagination, Select, InputNumber, Radio } from 'antd';
 import { FilterFilled, ExclamationCircleOutlined } from '@ant-design/icons';
 import ReactMarkdown from 'react-markdown/with-html';
 import BaseFormItem from './baseFormItem'
 import EditableTagGroup from './editableTagGroup'
+import Animetype from '../view/admin/animetype'
 import Filter from './filter'
 import moment from 'moment';
 import { authApi } from "../api";
@@ -38,12 +39,39 @@ class adminPageCompent extends Component {
             editModel: false,
             columns: [],
             data: [],
+
+            typeOptions: [],
+            optionsDialog: false
         };
 
     }
     componentDidMount () {
         this.setColumsData();
         this.searchDataList();
+    }
+    searchTypeOptions = () => {
+        switch (this.props.type) {
+            case "game":
+            case "anime":
+                const params = {
+                    optionsType: this.props.type,
+                    searchAll: true
+                }
+                authApi.optionsSearch(params).then((res) => {
+                    const code = res.data.code;
+                    if (code === 0) {
+                        message.error(res.data.msg);
+                    } else if (code === 1) {
+                        this.setState({
+                            typeOptions: res.data.options.data,
+                        });
+                    }
+                });
+                break;
+
+            default:
+                break;
+        }
     }
     setColumsData = () => {
         let columsData = [];
@@ -91,7 +119,53 @@ class adminPageCompent extends Component {
                     },
                 ]
                 break;
-
+            case "anime":
+                columsData = [
+                    {
+                        title: '动画类型',
+                        dataIndex: ["animeType", "name"],
+                    },
+                    {
+                        title: '原作',
+                        dataIndex: 'original',
+                        render: original => (
+                            <>
+                                {original.map(original => {
+                                    return (
+                                        <Tag key={original}>
+                                            {original}
+                                        </Tag>
+                                    );
+                                })}
+                            </>
+                        ),
+                    },
+                    {
+                        title: '导演',
+                        dataIndex: 'directed',
+                        render: directed => (
+                            <>
+                                {directed.map(directed => {
+                                    return (
+                                        <Tag key={directed}>
+                                            {directed}
+                                        </Tag>
+                                    );
+                                })}
+                            </>
+                        ),
+                    },
+                    {
+                        title: '动画公司',
+                        dataIndex: 'animationCompany',
+                    },
+                    {
+                        title: '已看集数',
+                        dataIndex: 'watched',
+                        render: progress => <span>{progress}集</span>
+                    },
+                ]
+                break;
             default:
                 break;
         }
@@ -142,7 +216,7 @@ class adminPageCompent extends Component {
             {
                 title: '评分',
                 dataIndex: 'score',
-                render: score => <span>{score}分</span>,
+                render: score => score > 0 ? <span>{score}分</span> : <span>暂未评分</span>,
             },
             {
                 title: '点评',
@@ -202,15 +276,31 @@ class adminPageCompent extends Component {
             okType: 'danger',
             cancelText: '否',
             onOk: () => {
+                switch (this.props.type) {
+                    case "comic":
+                        authApi.comicsDelete({ _id: id }).then((res) => {
+                            const code = res.data.code;
+                            if (code === 0) {
+                                message.error(res.data.msg);
+                            } else if (code === 1) {
+                                this.searchDataList();
+                            }
+                        });
+                        break;
+                    case "anime":
+                        authApi.animesDelete({ _id: id }).then((res) => {
+                            const code = res.data.code;
+                            if (code === 0) {
+                                message.error(res.data.msg);
+                            } else if (code === 1) {
+                                this.searchDataList();
+                            }
+                        });
+                        break;
+                    default:
+                        break;
+                }
                 console.log('OK', id);
-                authApi.comicsDelete({ _id: id }).then((res) => {
-                    const code = res.data.code;
-                    if (code === 0) {
-                        message.error(res.data.msg);
-                    } else if (code === 1) {
-                        this.searchDataList();
-                    }
-                });
             },
             onCancel () {
                 console.log('Cancel');
@@ -237,7 +327,16 @@ class adminPageCompent extends Component {
                     }
                 });
                 break;
-
+            case "anime":
+                authApi.animesSearch(params).then((res) => {
+                    console.log(res);
+                    if (res.data.code === 1) {
+                        this.setState({
+                            data: res.data.info.data,
+                            total: res.data.info.total,
+                        });
+                    }
+                });
             default:
                 break;
         }
@@ -245,6 +344,16 @@ class adminPageCompent extends Component {
     }
     showModal = (editForm) => {
         let newEditForm = Object.assign({}, _.cloneDeep(this.props.rawForm), editForm);
+        switch (this.props.type) {
+            case "game":
+                break;
+            case "anime":
+                newEditForm["animeType"] = newEditForm["animeType"]["_id"];
+                break;
+
+            default:
+                break;
+        }
         // 如果有系列数据
         if (newEditForm["series"]) {
             newEditForm["seriesName"] = newEditForm["series"]["title"];
@@ -252,8 +361,9 @@ class adminPageCompent extends Component {
         }
         // 如果有ID为修改,定义一个URL 
         if (newEditForm["_id"]) {
-            newEditForm["base64"] = `/api/cover?type=comic&id=${newEditForm["_id"]}&t=${this.state.timestamp}`;
+            newEditForm["base64"] = `/api/cover?type=${this.props.type}&id=${newEditForm["_id"]}&t=${this.state.timestamp}`;
         }
+        this.searchTypeOptions();
         this.setState({
             editModel: true,
             editForm: _.cloneDeep(newEditForm)
@@ -278,20 +388,43 @@ class adminPageCompent extends Component {
         } else {
             params['type'] = 'create';
         }
-        authApi.comicsCreateOrEdit(params).then((res) => {
-            const code = res.data.code;
-            if (code === 0) {
-                message.error(res.data.msg);
-            } else if (code === 1) {
-                message.success('提交成功');
-                this.setState({
-                    editModel: false
+        switch (this.props.type) {
+            case "comic":
+                authApi.comicsCreateOrEdit(params).then((res) => {
+                    const code = res.data.code;
+                    if (code === 0) {
+                        message.error(res.data.msg);
+                    } else if (code === 1) {
+                        message.success('提交成功');
+                        this.setState({
+                            editModel: false
+                        });
+                        this.baseFormItem.initSeries();
+                        //重新获取列表
+                        this.searchDataList();
+                    }
                 });
-                this.baseFormItem.initSeries();
-                //重新获取列表
-                this.searchDataList();
-            }
-        });
+                break;
+            case "anime":
+                authApi.animesCreateOrEdit(params).then((res) => {
+                    const code = res.data.code;
+                    if (code === 0) {
+                        message.error(res.data.msg);
+                    } else if (code === 1) {
+                        message.success('提交成功');
+                        this.setState({
+                            editModel: false
+                        });
+                        this.baseFormItem.initSeries();
+                        //重新获取列表
+                        this.searchDataList();
+                    }
+                });
+                break;
+            default:
+                break;
+        }
+
     };
 
     handleCancel = e => {
@@ -370,7 +503,67 @@ class adminPageCompent extends Component {
             this.searchDataList();
         });
     }
+    optionsDialogClose = () => {
+        this.setState({
+            optionsDialog: false
+        });
+        this.searchTypeOptions();
+    }
+    optionsDialogShow = () => {
+        this.setState({
+            optionsDialog: true
+        });
+    }
     render () {
+        const otherForm = () => {
+            let form = <></>;
+            switch (this.props.type) {
+                case "comic":
+                    form = <>
+                        <Form.Item label="原作">
+                            <EditableTagGroup type={"input"} tags={this.state.editForm.original} onTagChange={(tags) => this.onTagChange("original", tags)} />
+                        </Form.Item>
+                        <Form.Item label="作者">
+                            <EditableTagGroup type={"input"} tags={this.state.editForm.author} onTagChange={(tags) => this.onTagChange("author", tags)} />
+                        </Form.Item>
+                        <Form.Item label="出版社">
+                            <Input value={this.state.editForm.publishingHouse} onChange={(e) => this.inputChange("publishingHouse", e)} />
+                        </Form.Item>
+                        <Form.Item label="进度" className="acgnlist-form-item-required">
+                            <Slider defaultValue={0} value={this.state.editForm.progress} onChange={(value) => this.inputChange("progress", value)} className="acgnlist_admin_edit_slider" />
+                            <div>{this.state.editForm.progress}%</div>
+                        </Form.Item>
+                    </>
+                    break;
+                case "anime":
+                    form = <>
+                        <Form.Item label="动画类型" className="acgnlist-form-item-required">
+                            <Radio.Group onChange={(e) => this.inputChange("animeType", e)} value={this.state.editForm.animeType}>
+                                {this.state.typeOptions.map((data) => {
+                                    return <Radio value={data._id} key={data._id}>{data.name}</Radio>
+                                })}
+                            </Radio.Group>
+                            <Button size="small" className="acgnlist_option_button" onClick={this.optionsDialogShow}>选项管理</Button>
+                        </Form.Item>
+                        <Form.Item label="原作">
+                            <EditableTagGroup type={"input"} tags={this.state.editForm.original} onTagChange={(tags) => this.onTagChange("original", tags)} />
+                        </Form.Item>
+                        <Form.Item label="导演">
+                            <EditableTagGroup type={"input"} tags={this.state.editForm.directed} onTagChange={(tags) => this.onTagChange("directed", tags)} />
+                        </Form.Item>
+                        <Form.Item label="动画公司">
+                            <Input value={this.state.editForm.animationCompany} onChange={(e) => this.inputChange("animationCompany", e)} />
+                        </Form.Item>
+                        <Form.Item label="已看集数">
+                            <InputNumber min={0} value={this.state.editForm.watched} onChange={(value) => this.inputChange("watched", value)} />
+                        </Form.Item>
+                    </>
+                    break;
+                default:
+                    break;
+            }
+            return form;
+        }
         return (
             <div>
                 <div className="clearfix">
@@ -383,8 +576,7 @@ class adminPageCompent extends Component {
 
                     <Filter sortOption={sortOption} showShowSelect={true} showStatusSelect={true} showMode={this.state.showMode} keyword={this.state.keyword} sort={this.state.sort} status={this.state.status} onSearch={(params) => this.filterChange(params)} onClear={(params) => this.filterChange(params)} />
                 </div>
-                <Divider />
-                <div>
+                <div className="mt10">
                     <Table rowKey="_id"
                         bordered
                         columns={this.state.columns}
@@ -419,20 +611,24 @@ class adminPageCompent extends Component {
                             className="acgnlist_admin_form"
                         >
                             <BaseFormItem onRef={this.onRef} editForm={this.state.editForm} formChange={(key, value) => this.formChange(key, value)} />
-                            <Form.Item label="原作">
-                                <EditableTagGroup type={"input"} tags={this.state.editForm.original} onTagChange={(tags) => this.onTagChange("original", tags)} />
-                            </Form.Item>
-                            <Form.Item label="作者">
-                                <EditableTagGroup type={"input"} tags={this.state.editForm.author} onTagChange={(tags) => this.onTagChange("author", tags)} />
-                            </Form.Item>
-                            <Form.Item label="出版社">
-                                <Input value={this.state.editForm.publishingHouse} onChange={(e) => this.inputChange("publishingHouse", e)} />
-                            </Form.Item>
-                            <Form.Item label="进度" className="acgnlist-form-item-required">
-                                <Slider defaultValue={0} value={this.state.editForm.progress} onChange={(value) => this.inputChange("progress", value)} className="acgnlist_admin_edit_slider" />
-                                <div>{this.state.editForm.progress}%</div>
-                            </Form.Item>
+                            {otherForm()}
                         </Form>
+                    </div>
+                </Modal>
+                <Modal
+                    className="acgnlist_admin_edit_modal acgnlist_modal"
+                    title="选项管理"
+                    okText="确认"
+                    cancelText="取消"
+                    footer={null}
+                    destroyOnClose={true}
+                    centered={true}
+                    maskClosable={false}
+                    visible={this.state.optionsDialog}
+                    onCancel={this.optionsDialogClose}
+                >
+                    <div>
+                        <Animetype />
                     </div>
                 </Modal>
 

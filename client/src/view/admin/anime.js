@@ -19,10 +19,12 @@ const rawForm = {
     startDate: "",
     endDate: "",
     show: true,
-
-    progress: 0,
+    /*-----------------以上为共通----------------*/
+    animeType: { _id: '', name: '' },
     original: [],
-    author: [],
+    directed: [],
+    animationCompany: '',
+    watched: 0
 }
 class adminAnime extends Component {
     constructor(props) {

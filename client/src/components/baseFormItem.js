@@ -90,8 +90,6 @@ class baseFormItem extends Component {
         });
     };
     initSeries = () => {
-        // TODO:清空系列数据
-        console.log('清空系列数据');
     }
     onSeriesSelect = async (record) => {
         console.log(record);
@@ -163,6 +161,8 @@ class baseFormItem extends Component {
                 <Modal
                     className="acgnlist_modal"
                     title="选择系列"
+                    okText="确认"
+                    cancelText="取消"
                     centered={true}
                     maskClosable={false}
                     destroyOnClose={true}

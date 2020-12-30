@@ -353,7 +353,7 @@ body::-webkit-scrollbar-thumb:hover {
     margin-top: 5px;
     margin-bottom: 5px;
 }
-.acgnlist-form-item-required label:before{
+.acgnlist-form-item-required .ant-form-item-label label:before{
     display: inline-block;
     margin-right: 4px;
     color: #ff4d4f;
@@ -375,4 +375,7 @@ body::-webkit-scrollbar-thumb:hover {
     justify-content: center;
     align-items: center;
     z-index: 99999;
+}
+.acgnlist_option_button{
+    margin: 3px 0;
 }

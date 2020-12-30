@@ -45,6 +45,15 @@ export default function (api) {
     optionsDelete (data) {
       return api.post('/optionsDelete', data)
     },
+    animesCreateOrEdit (data) {
+      return api.post('/animesCreateOrEdit', data)
+    },
+    animesSearch (data) {
+      return api.post('/animesSearch', data)
+    },
+    animesDelete (data) {
+      return api.post('/animesDelete', data)
+    },
     checkadmin () {
       return api.get('/checkadmin')
     },

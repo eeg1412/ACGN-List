@@ -20,6 +20,9 @@ const apiOptionsCreate = require('../api/optionsCreate');
 const apiOptionsSearch = require('../api/optionsSearch');
 const apiOptionsEdit = require('../api/optionsEdit');
 const apiOptionsDelete = require('../api/optionsDelete');
+const apiAnimesCreateOrEdit = require('../api/animesCreateOrEdit');
+const apiAnimesSearch = require('../api/animesSearch');
+const apiAnimesDelete = require('../api/animesDelete');
 
 // post
 router.post('/adminregister', apiAdminRegister);
@@ -36,6 +39,9 @@ router.post('/optionsCreate', apiOptionsCreate);
 router.post('/optionsSearch', apiOptionsSearch);
 router.post('/optionsEdit', apiOptionsEdit);
 router.post('/optionsDelete', apiOptionsDelete);
+router.post('/animesCreateOrEdit', apiAnimesCreateOrEdit);
+router.post('/animesSearch', apiAnimesSearch);
+router.post('/animesDelete', apiAnimesDelete);
 
 
 

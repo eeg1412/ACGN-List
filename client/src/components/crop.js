@@ -101,6 +101,8 @@ class crop extends Component {
                 <Modal
                     className="acgnlist_modal"
                     title="选择封面"
+                    okText="确认"
+                    cancelText="取消"
                     centered={true}
                     destroyOnClose={true}
                     maskClosable={false}

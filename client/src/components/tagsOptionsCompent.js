@@ -174,10 +174,9 @@ class tagsOptionsCompent extends Component {
                         <Button type="primary" onClick={() => this.showNameInputDialog()}>新增</Button>
                     </div>
                 </div>
-                <Divider />
-                <div>
+                <div className="mt10">
                     {this.state.list.map((data) => {
-                        return <Tag color="blue">{data.name} <EditOutlined className="acgnlist_mouse_pointer" onClick={() => this.showNameInputDialog(data._id, data.name)} /><CloseOutlined className="acgnlist_mouse_pointer acgnlist_icon_ml4" onClick={() => this.deleteContent(data._id)} /></Tag>
+                        return <Tag color="blue" key={data._id}>{data.name} <EditOutlined className="acgnlist_mouse_pointer" onClick={() => this.showNameInputDialog(data._id, data.name)} /><CloseOutlined className="acgnlist_mouse_pointer acgnlist_icon_ml4" onClick={() => this.deleteContent(data._id)} /></Tag>
                     })}
 
                 </div>
@@ -190,6 +189,8 @@ class tagsOptionsCompent extends Component {
                 <Modal
                     className="acgnlist_modal"
                     title={this.state.editId ? '修改' : '新建'}
+                    okText="确认"
+                    cancelText="取消"
                     centered={true}
                     destroyOnClose={true}
                     maskClosable={false}
