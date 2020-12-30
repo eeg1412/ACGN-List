@@ -1,4 +1,6 @@
 const optionsUtils = require('../mongodb/utils/options');
+const animesUtils = require('../mongodb/utils/animes');
+const gamesUtils = require('../mongodb/utils/games');
 const utils = require('../utils/utils');
 var chalk = require('chalk');
 const validator = require('validator');
@@ -44,7 +46,33 @@ module.exports = async function (req, res, next) {
         );
         return false;
     }
-    // TODO:判断选项是否被占用
+    // 判断选项是否被占用
+    switch (options.type) {
+        case "anime":
+            const anime = await animesUtils.findOne({ animeType: id });
+            if (anime) {
+                res.send({
+                    code: 0,
+                    msg: '该选项存在动画数据依赖，无法删除！'
+                });
+                return false;
+            }
+            break;
+
+        case "game":
+            const game = await gamesUtils.findOne({ platform: id });
+            if (game) {
+                res.send({
+                    code: 0,
+                    msg: '该选项存在游戏数据依赖，无法删除！'
+                });
+                return false;
+            }
+            break;
+
+        default:
+            break;
+    }
 
     // 写入数据
     const deleteParams = {

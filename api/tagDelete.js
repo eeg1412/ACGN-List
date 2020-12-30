@@ -1,4 +1,5 @@
 const tagsUtils = require('../mongodb/utils/tags');
+const seriesUtils = require('../mongodb/utils/series');
 const utils = require('../utils/utils');
 var chalk = require('chalk');
 const validator = require('validator');
@@ -44,7 +45,15 @@ module.exports = async function (req, res, next) {
         );
         return false;
     }
-    // TODO:判断标签是否被占用
+    // 判断标签是否被占用
+    const series = await seriesUtils.findOne({ tags: id });
+    if (series) {
+        res.send({
+            code: 0,
+            msg: '该标签存在系列数据依赖，无法删除！'
+        });
+        return false;
+    }
 
     // 写入数据
     const deleteParams = {

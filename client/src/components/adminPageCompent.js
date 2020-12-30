@@ -376,6 +376,7 @@ class adminPageCompent extends Component {
                         });
                     }
                 });
+                break;
             case "game":
                 authApi.gamesSearch(params).then((res) => {
                     console.log(res);

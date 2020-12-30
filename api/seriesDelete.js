@@ -1,4 +1,8 @@
 const seriesUtils = require('../mongodb/utils/series');
+const animesUtils = require('../mongodb/utils/animes');
+const comicsUtils = require('../mongodb/utils/comics');
+const gamesUtils = require('../mongodb/utils/games');
+const novelsUtils = require('../mongodb/utils/novels');
 const utils = require('../utils/utils');
 var chalk = require('chalk');
 const validator = require('validator');
@@ -31,8 +35,39 @@ module.exports = async function (req, res, next) {
         );
         return false;
     }
-    // TODO:校验是否有依赖于这个系列的ACGN
-
+    // 校验是否有依赖于这个系列的ACGN
+    const anime = await animesUtils.findOne({ series: _id });
+    if (anime) {
+        res.send({
+            code: 0,
+            msg: '该系列存在动画数据依赖，无法删除！'
+        });
+        return false;
+    }
+    const comic = await comicsUtils.findOne({ series: _id });
+    if (comic) {
+        res.send({
+            code: 0,
+            msg: '该系列存在漫画数据依赖，无法删除！'
+        });
+        return false;
+    }
+    const game = await gamesUtils.findOne({ series: _id });
+    if (game) {
+        res.send({
+            code: 0,
+            msg: '该系列存在游戏数据依赖，无法删除！'
+        });
+        return false;
+    }
+    const novel = await novelsUtils.findOne({ series: _id });
+    if (novel) {
+        res.send({
+            code: 0,
+            msg: '该系列存在小说数据依赖，无法删除！'
+        });
+        return false;
+    }
     // 删除数据
     await seriesUtils.deleteOne({ _id: _id });
     res.send({
