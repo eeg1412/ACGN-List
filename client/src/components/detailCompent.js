@@ -61,10 +61,10 @@ class detailCompent extends Component {
         };
     }
     componentDidMount () {
-        this.searchComics("doing");
-        this.searchComics("want");
-        this.searchComics("out");
-        this.searchComics("complete");
+        this.searchItemList("doing");
+        this.searchItemList("want");
+        this.searchItemList("out");
+        this.searchItemList("complete");
     }
     creatNewTotal = (total, status) => {
         let newTotal = {};
@@ -108,7 +108,7 @@ class detailCompent extends Component {
                 break;
         }
     }
-    searchComics = (status) => {
+    searchItemList = (status) => {
         const params = {
             page: this.state.page[status],
             keyword: this.state.filterParams[status].keyword,
@@ -125,7 +125,15 @@ class detailCompent extends Component {
                     }
                 });
                 break;
-
+            case "anime":
+                authApi.animesSearch(params).then((res) => {
+                    console.log(res);
+                    const newTotalObj = this.creatNewTotal(res.data.info.total, status);
+                    if (res.data.code === 1) {
+                        this.setListData(status, res, newTotalObj);
+                    }
+                });
+                break;
             default:
                 break;
         }
@@ -143,7 +151,7 @@ class detailCompent extends Component {
             filterParams: newParamsObj,
             page: newPageObj
         }, () => {
-            this.searchComics(status);
+            this.searchItemList(status);
         });
     }
     pageChange = (page, status) => {
@@ -151,7 +159,7 @@ class detailCompent extends Component {
         this.setState({
             page: newPageObj
         }, () => {
-            this.searchComics(status);
+            this.searchItemList(status);
         });
     }
     openDetail = (data) => {
@@ -174,9 +182,23 @@ class detailCompent extends Component {
         let res = "";
         switch (this.props.type) {
             case "comic":
-                res = data || "--";
+                res = data.originalName || "--";
                 break;
-
+            case "anime":
+                res = data.animeType.name
+            default:
+                break;
+        }
+        return res;
+    }
+    progressInfo = (data) => {
+        let res = "";
+        switch (this.props.type) {
+            case "comic":
+                res = data.progress + "%";
+                break;
+            case "anime":
+                res = data.watched + "集";
             default:
                 break;
         }
@@ -239,6 +261,69 @@ class detailCompent extends Component {
                     <Divider />
                 </>)
                 break;
+            case "anime":
+                detailInfo = (this.state.detailData && <>
+                    <Row>
+                        <Col lg={4} md={4} sm={4} xs={24}>
+                            <div className="acgnlist_detail_label">动画类型：</div>
+                        </Col>
+                        <Col lg={20} md={20} sm={20} xs={24}>
+                            <span>{this.state.detailData.animeType.name}</span>
+                        </Col>
+                    </Row>
+                    <Divider />
+                    {this.state.detailData.original.length > 0 && <div>
+                        <Row>
+                            <Col lg={4} md={4} sm={4} xs={24}>
+                                <div className="acgnlist_detail_label">原作：</div>
+                            </Col>
+                            <Col lg={20} md={20} sm={20} xs={24}>
+                                {
+                                    this.state.detailData.original.map((original, index) => {
+                                        return <span className="pr5" key={original + index}>{original}</span>
+                                    })
+                                }
+                            </Col>
+                        </Row>
+                        <Divider />
+                    </div>}
+                    {this.state.detailData.directed.length > 0 && <div>
+                        <Row>
+                            <Col lg={4} md={4} sm={4} xs={24}>
+                                <div className="acgnlist_detail_label">导演：</div>
+                            </Col>
+                            <Col lg={20} md={20} sm={20} xs={24}>
+                                {
+                                    this.state.detailData.directed.map((directed, index) => {
+                                        return <span className="pr5" key={directed + index}>{directed}</span>
+                                    })
+                                }
+                            </Col>
+                        </Row>
+                        <Divider />
+                    </div>}
+                    {this.state.detailData.animationCompany && <div>
+                        <Row>
+                            <Col lg={4} md={4} sm={4} xs={24}>
+                                <div className="acgnlist_detail_label">动画公司：</div>
+                            </Col>
+                            <Col lg={20} md={20} sm={20} xs={24}>
+                                <span>{this.state.detailData.animationCompany}</span>
+                            </Col>
+                        </Row>
+                        <Divider />
+                    </div>}
+                    <Row>
+                        <Col lg={4} md={4} sm={4} xs={24}>
+                            <div className="acgnlist_detail_label">已看集数：</div>
+                        </Col>
+                        <Col lg={20} md={20} sm={20} xs={24}>
+                            <span>{this.state.detailData.watched}集</span>
+                        </Col>
+                    </Row>
+                    <Divider />
+                </>)
+                break;
 
             default:
                 break;
@@ -273,8 +358,8 @@ class detailCompent extends Component {
                                                 <Col flex="auto">
                                                     <div className="textBox">
                                                         <p>{data.title}</p>
-                                                        <p>{this.secondInfo(data.originalName)}</p>
-                                                        <p>已看{data.progress}%</p>
+                                                        <p>{this.secondInfo(data)}</p>
+                                                        <p>{this.progressInfo(data)}</p>
                                                         {data.score ? <div><Rate className="acgnlist_rate" disabled allowHalf defaultValue={data.score / 20} /> {data.score}分</div> : <div>暂未评分</div>}
                                                     </div>
                                                 </Col>
@@ -315,7 +400,7 @@ class detailCompent extends Component {
                                             <Col flex="auto">
                                                 <div className="textBox">
                                                     <p>{data.title}</p>
-                                                    <p>{this.secondInfo(data.originalName)}</p>
+                                                    <p>{this.secondInfo(data)}</p>
                                                     <p>于{moment(data.creatDate).format("YYYY年MM月DD日")}添加</p>
                                                     {data.score ? <div><Rate className="acgnlist_rate" disabled allowHalf defaultValue={data.score / 20} /> {data.score}分</div> : <div>暂未评分</div>}
                                                 </div>
@@ -356,7 +441,7 @@ class detailCompent extends Component {
                                             <Col flex="auto">
                                                 <div className="textBox">
                                                     <p>{data.title}</p>
-                                                    <p>{this.secondInfo(data.originalName)}</p>
+                                                    <p>{this.secondInfo(data)}</p>
                                                     {data.endDate ? <p>于{moment(data.endDate).format("YYYY年MM月DD日")}看完</p> : '暂未添加看完时间'}
                                                     {data.score ? <div><Rate className="acgnlist_rate" disabled allowHalf defaultValue={data.score / 20} /> {data.score}分</div> : <div>暂未评分</div>}
                                                 </div>
@@ -397,8 +482,8 @@ class detailCompent extends Component {
                                             <Col flex="auto">
                                                 <div className="textBox">
                                                     <p>{data.title}</p>
-                                                    <p>{this.secondInfo(data.originalName)}</p>
-                                                    <p>已看{data.progress}%</p>
+                                                    <p>{this.secondInfo(data)}</p>
+                                                    <p>{this.progressInfo(data)}</p>
                                                     {data.score ? <div><Rate className="acgnlist_rate" disabled allowHalf defaultValue={data.score / 20} /> {data.score}分</div> : <div>暂未评分</div>}
                                                 </div>
                                             </Col>
