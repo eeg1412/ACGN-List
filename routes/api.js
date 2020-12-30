@@ -9,6 +9,8 @@ const apiAdminLogin = require('../api/adminLogin');
 const apiCaptcha = require('../api/captcha');
 const apiTagCreate = require('../api/tagCreate');
 const apiTagSearch = require('../api/tagSearch');
+const apiTagDelete = require('../api/tagDelete');
+const apiTagEdit = require('../api/tagEdit');
 const apiSeriesCreateOrEdit = require('../api/seriesCreateOrEdit');
 const apiSeriesSearch = require('../api/seriesSearch');
 const apiSeriesDelete = require('../api/seriesDelete');
@@ -54,7 +56,8 @@ router.post('/gamesDelete', apiGamesDelete);
 router.post('/novelsCreateOrEdit', apiNovelsCreateOrEdit);
 router.post('/novelsSearch', apiNovelsSearch);
 router.post('/novelsDelete', apiNovelsDelete);
-
+router.post('/tagDelete', apiTagDelete);
+router.post('/tagEdit', apiTagEdit);
 
 
 

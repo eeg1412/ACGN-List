@@ -52,7 +52,19 @@ class tagsOptionsCompent extends Component {
                     }
                 });
                 break;
-
+            case "tag":
+                authApi.tagsearch(params).then((res) => {
+                    const code = res.data.code;
+                    if (code === 0) {
+                        message.error(res.data.msg);
+                    } else if (code === 1) {
+                        this.setState({
+                            list: res.data.tags.data,
+                            total: res.data.tags.total,
+                        });
+                    }
+                });
+                break;
             default:
                 break;
         }
@@ -76,6 +88,20 @@ class tagsOptionsCompent extends Component {
                             this.afterSubmitData();
                         }
                     });
+                    break;
+                case "tag":
+                    params["name"] = this.state.name;
+                    params["id"] = this.state.editId;
+                    authApi.tagEdit(params).then((res) => {
+                        const code = res.data.code;
+                        if (code === 0) {
+                            message.error(res.data.msg);
+                        } else if (code === 1) {
+                            message.success('提交成功');
+                            this.afterSubmitData();
+                        }
+                    });
+                    break;
                 default:
                     break;
             }
@@ -97,7 +123,17 @@ class tagsOptionsCompent extends Component {
                         }
                     });
                     break;
-
+                case "tag":
+                    params["name"] = this.state.name;
+                    authApi.tagcreate(params).then((res) => {
+                        const code = res.data.code;
+                        if (code === 0) {
+                            message.error(res.data.msg);
+                        } else if (code === 1) {
+                            message.success('提交成功');
+                            this.afterSubmitData();
+                        }
+                    });
                 default:
                     break;
             }
@@ -155,7 +191,16 @@ class tagsOptionsCompent extends Component {
                             }
                         });
                         break;
-
+                    case "tag":
+                        authApi.tagDelete({ id: id }).then((res) => {
+                            const code = res.data.code;
+                            if (code === 0) {
+                                message.error(res.data.msg);
+                            } else if (code === 1) {
+                                this.searchData();
+                            }
+                        });
+                        break;
                     default:
                         break;
                 }
@@ -177,7 +222,7 @@ class tagsOptionsCompent extends Component {
                 <div className="mt10">
                     {this.state.list.length === 0 && <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />}
                     {this.state.list.map((data) => {
-                        return <Tag color="blue" key={data._id}>{data.name} <EditOutlined className="acgnlist_mouse_pointer" onClick={() => this.showNameInputDialog(data._id, data.name)} /><CloseOutlined className="acgnlist_mouse_pointer acgnlist_icon_ml4" onClick={() => this.deleteContent(data._id)} /></Tag>
+                        return <Tag color="blue" className="mt5 mb5" key={data._id}>{data.name} <EditOutlined className="acgnlist_mouse_pointer" onClick={() => this.showNameInputDialog(data._id, data.name)} /><CloseOutlined className="acgnlist_mouse_pointer acgnlist_icon_ml4" onClick={() => this.deleteContent(data._id)} /></Tag>
                     })}
 
                 </div>

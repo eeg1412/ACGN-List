@@ -72,6 +72,12 @@ export default function (api) {
     novelsDelete (data) {
       return api.post('/novelsDelete', data)
     },
+    tagDelete (data) {
+      return api.post('/tagDelete', data)
+    },
+    tagEdit (data) {
+      return api.post('/tagEdit', data)
+    },
     checkadmin () {
       return api.get('/checkadmin')
     },

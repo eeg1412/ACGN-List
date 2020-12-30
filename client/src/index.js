@@ -26,6 +26,7 @@ ReactDOM.render(
         <Route exact path="/admin/novel" component={adminIndex}></Route>
         <Route exact path="/admin/animetype" component={adminIndex}></Route>
         <Route exact path="/admin/gameplatform" component={adminIndex}></Route>
+        <Route exact path="/admin/tags" component={adminIndex}></Route>
         <Route exact path="/anime" component={App}></Route>
         <Route exact path="/game" component={App}></Route>
         <Route exact path="/comic" component={App}></Route>

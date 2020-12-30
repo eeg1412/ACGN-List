@@ -38,3 +38,8 @@ exports.findInPage = async function (parmas = {}, pageSize_ = 20, page_ = 1, get
     };
     return res;
 }
+
+exports.deleteOne = async function (params) {
+    // document查询
+    return await tagsModel.deleteOne(params);
+}
