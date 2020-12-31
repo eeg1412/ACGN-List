@@ -134,6 +134,7 @@ class tagsOptionsCompent extends Component {
                             this.afterSubmitData();
                         }
                     });
+                    break;
                 default:
                     break;
             }

@@ -11,8 +11,7 @@ import novel from './novel'
 import animetype from './animetype'
 import gameplatform from './platform'
 import tags from './tags'
-
-const { SubMenu } = Menu;
+import adminChangePassword from './adminChangePassword'
 
 const { Header, Footer, Sider, Content } = Layout;
 
@@ -73,6 +72,7 @@ class adminIndex extends Component {
                                         <Menu.Item key="/admin/tags">标签管理</Menu.Item>
                                         <Menu.Item key="/admin/animetype">动画类型</Menu.Item>
                                         <Menu.Item key="/admin/gameplatform">游戏平台</Menu.Item>
+                                        <Menu.Item key="/admin/adminChangePassword">修改密码</Menu.Item>
                                     </Menu>
                                 </div>
                             </Sider>
@@ -86,6 +86,7 @@ class adminIndex extends Component {
                                     <Route path="/admin/animetype" exact component={animetype}></Route>
                                     <Route path="/admin/gameplatform" exact component={gameplatform}></Route>
                                     <Route path="/admin/tags" exact component={tags}></Route>
+                                    <Route path="/admin/adminChangePassword" exact component={adminChangePassword}></Route>
                                 </Switch>
                             </Content>
                         </Layout>

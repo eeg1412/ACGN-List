@@ -78,6 +78,9 @@ export default function (api) {
     tagEdit (data) {
       return api.post('/tagEdit', data)
     },
+    adminChangePassword (data) {
+      return api.post('/adminChangePassword', data)
+    },
     checkadmin () {
       return api.get('/checkadmin')
     },

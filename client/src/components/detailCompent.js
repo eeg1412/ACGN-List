@@ -208,6 +208,7 @@ class detailCompent extends Component {
                 break;
             case "game":
                 res = data.platform.name
+                break;
             default:
                 break;
         }
@@ -225,6 +226,7 @@ class detailCompent extends Component {
                 break;
             case "anime":
                 res = "已看" + data.watched + "集";
+                break;
             default:
                 break;
         }

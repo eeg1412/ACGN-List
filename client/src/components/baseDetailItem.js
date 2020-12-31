@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
-import { Button, Switch, Form, Input, Upload, Image, Rate, Divider, Col, Row } from 'antd';
+import { Image, Rate, Divider, Col, Row } from 'antd';
 import moment from 'moment';
 import 'moment/locale/zh-cn';
-import locale from 'antd/es/date-picker/locale/zh_CN';
 import ReactMarkdown from 'react-markdown/with-html';
 
 class baseDetailItem extends Component {

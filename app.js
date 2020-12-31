@@ -25,6 +25,6 @@ app.use(session({
 
 app.use('/api', apiRouter);
 app.use(history());
-app.use('/', express.static(path.join(__dirname, 'client/dist')));
+app.use('/', express.static(path.join(__dirname, 'client/build')));
 
 module.exports = app;

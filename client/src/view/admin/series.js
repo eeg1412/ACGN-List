@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, Table, message, Modal, Form, Tag, Input, Image, Upload, Pagination, Select } from 'antd';
+import { Button, Table, message, Modal, Form, Tag, Input, Image, Upload, Pagination } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import ReactMarkdown from 'react-markdown/with-html';
@@ -10,7 +10,6 @@ const _ = require('lodash');
 const { TextArea } = Input;
 const { confirm } = Modal;
 const { Search } = Input;
-const { Option } = Select;
 
 const rawForm = {
     _id: '',

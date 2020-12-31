@@ -31,6 +31,7 @@ const apiGamesDelete = require('../api/gamesDelete');
 const apiNovelsCreateOrEdit = require('../api/novelsCreateOrEdit');
 const apiNovelsSearch = require('../api/novelsSearch');
 const apiNovelsDelete = require('../api/novelsDelete');
+const apiAdminChangePassword = require('../api/adminChangePassword');
 
 // post
 router.post('/adminregister', apiAdminRegister);
@@ -58,7 +59,7 @@ router.post('/novelsSearch', apiNovelsSearch);
 router.post('/novelsDelete', apiNovelsDelete);
 router.post('/tagDelete', apiTagDelete);
 router.post('/tagEdit', apiTagEdit);
-
+router.post('/adminChangePassword', apiAdminChangePassword);
 
 
 // get

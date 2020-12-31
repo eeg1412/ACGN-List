@@ -334,6 +334,7 @@ class adminPageCompent extends Component {
                                 this.searchDataList();
                             }
                         });
+                        break;
                     default:
                         break;
                 }

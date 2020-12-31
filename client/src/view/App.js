@@ -1,6 +1,5 @@
 import React from 'react';
 import { Switch, Route } from 'react-router-dom';
-import { authApi } from "../api";
 import { Layout, Menu, Spin } from 'antd';
 import anime from './anime'
 import comic from './comic'

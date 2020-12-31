@@ -3,10 +3,10 @@ import { withRouter } from 'react-router-dom';
 import DetailCompent from '../components/detailCompent';
 
 const statusList = {
-    "doing": "正在看",
-    "want": "想看",
+    "doing": "正在读",
+    "want": "想读",
     "out": "弃坑",
-    "complete": "看完",
+    "complete": "读完",
 }
 
 class novel extends Component {
