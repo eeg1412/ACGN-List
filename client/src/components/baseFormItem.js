@@ -149,10 +149,10 @@ class baseFormItem extends Component {
                     <TextArea rows={4} placeholder="支持Markdown格式" value={this.props.editForm.remarks} onChange={(e) => this.inputChange('remarks', e)} />
                 </Form.Item>
                 <Form.Item label="开始时间">
-                    <DatePicker locale={locale} showTime placeholder="请选择开始时间" value={this.props.editForm.startDate ? moment(this.props.editForm.startDate, "YYYY-MM-DD h:mm:ss") : ""} onChange={(value) => this.inputChange('startDate', value ? value.toISOString() : "")} />
+                    <DatePicker locale={locale} showTime placeholder="请选择开始时间" style={{ "width": "230px" }} format="YYYY年MM月DD日 HH:mm:ss" value={this.props.editForm.startDate ? moment(this.props.editForm.startDate) : ""} onChange={(value) => this.inputChange('startDate', value ? value.toISOString() : "")} />
                 </Form.Item>
                 <Form.Item label="结束时间">
-                    <DatePicker locale={locale} showTime placeholder="请选择结束时间" value={this.props.editForm.endDate ? moment(this.props.editForm.endDate, "YYYY-MM-DD h:mm:ss") : ""} onChange={(value) => this.inputChange('endDate', value ? value.toISOString() : "")} />
+                    <DatePicker locale={locale} showTime placeholder="请选择结束时间" style={{ "width": "230px" }} format="YYYY年MM月DD日 HH:mm:ss" value={this.props.editForm.endDate ? moment(this.props.editForm.endDate) : ""} onChange={(value) => this.inputChange('endDate', value ? value.toISOString() : "")} />
                 </Form.Item>
                 <Form.Item label="是否显示" value={this.props.editForm.show} className="acgnlist-form-item-required">
                     <Switch checked={this.props.editForm.show} onChange={(value) => this.inputChange('show', value)} />
