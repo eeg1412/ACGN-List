@@ -228,7 +228,7 @@ class tagsOptionsCompent extends Component {
 
                 </div>
                 <div className="tr mt10">
-                    <Pagination current={this.state.page}
+                    <Pagination current={this.state.page} showSizeChanger={false}
                         total={this.state.total}
                         onChange={this.pageChange}
                         pageSize={20} />

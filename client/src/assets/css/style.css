@@ -379,3 +379,9 @@ body::-webkit-scrollbar-thumb:hover {
 .acgnlist_option_button{
     margin: 3px 0;
 }
+.acgnlist_tag_max80{
+    max-width: 80px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

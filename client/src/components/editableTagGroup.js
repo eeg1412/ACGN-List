@@ -25,7 +25,7 @@ export default class editableTagGroup extends Component {
             clearTimeout(this.searchTimer);
             this.searchTimer = setTimeout(() => {
                 console.log(name);
-                authApi.tagsearch({ name: name }).then(res => {
+                authApi.tagsearch({ name: name, isAll: true }).then(res => {
                     const code = res.data.code;
                     if (code === 0) {
                         message.error(res.data.msg);

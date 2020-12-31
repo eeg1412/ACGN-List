@@ -8,6 +8,7 @@ const _ = require('lodash');
 module.exports = async function (req, res, next) {
     // 数据读取
     const name = req.body.name ? String(req.body.name) : '';
+    const isAll = req.body.isAll ? true : false;
     const page = Number(req.body.page || 1);
     if (!_.isInteger(page) || page < 1) {
         res.send({
@@ -24,7 +25,13 @@ module.exports = async function (req, res, next) {
         const reg = new RegExp(name, 'i');
         params["name"] = { $regex: reg };
     }
-    const tagsData = await tagsUtils.findInPage(params, 20, page);
+    const tagsData = {};
+    if (isAll) {
+        const tagsData_ = await tagsUtils.findMany(params);
+        tagsData["data"] = tagsData_;
+    } else {
+        tagsData = await tagsUtils.findInPage(params, 20, page);
+    }
     res.send({
         code: 1,
         tags: tagsData,

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, Table, message, Modal, Form, Tag, Input, Image, Upload, Pagination } from 'antd';
+import { Button, Table, message, Modal, Form, Tag, Input, Image, Upload, Pagination, Tooltip } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import ReactMarkdown from 'react-markdown/with-html';
@@ -68,9 +68,9 @@ class adminSeries extends Component {
                     <>
                         {tags.map(tag => {
                             return (
-                                <Tag key={tag._id}>
+                                <Tooltip title={tag.name}><Tag key={tag._id} className="acgnlist_tag_max80">
                                     {tag.name}
-                                </Tag>
+                                </Tag></Tooltip>
                             );
                         })}
                     </>
@@ -91,6 +91,7 @@ class adminSeries extends Component {
             {
                 title: '录入时间',
                 dataIndex: 'creatDate',
+                width: 214,
                 render: creatDate => <div>{moment(creatDate).format('YYYY年MM月DD日 HH:mm:ss')}</div>,
                 sorter: true,
                 sortOrder: "descend",
@@ -360,7 +361,7 @@ class adminSeries extends Component {
                         scroll={{ x: 1000 }} sticky={false}
                         pagination={false} />
                     <div className="tr mt10">
-                        <Pagination current={this.state.page}
+                        <Pagination current={this.state.page} showSizeChanger={false}
                             total={this.state.total}
                             onChange={this.pageChange}
                             pageSize={20} />

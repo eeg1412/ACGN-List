@@ -122,7 +122,7 @@ module.exports = async function (req, res, next) {
         /*-----------------以上为共通----------------*/
         platform: platform,
         gameCompany: gameCompany,
-        progress: progress,
+        progress: isLongGame ? 0 : progress,
         isLongGame: isLongGame,
     }
     let saveData = null;

@@ -123,7 +123,7 @@ class baseDetailItem extends Component {
                         <div className="acgnlist_detail_label">添加时间：</div>
                     </Col>
                     <Col lg={20} md={20} sm={20} xs={24}>
-                        <div>{moment(this.props.detailData.creatDate).format("YYYY年MM月DD日 HH时MM分SS秒")}</div>
+                        <div>{moment(this.props.detailData.creatDate).format("YYYY年MM月DD日 HH时mm分ss秒")}</div>
                     </Col>
                 </Row>
                 <Divider />
@@ -133,7 +133,7 @@ class baseDetailItem extends Component {
                             <div className="acgnlist_detail_label">开始时间：</div>
                         </Col>
                         <Col lg={20} md={20} sm={20} xs={24}>
-                            <div>{moment(this.props.detailData.startDate).format("YYYY年MM月DD日 HH时MM分SS秒")}</div>
+                            <div>{moment(this.props.detailData.startDate).format("YYYY年MM月DD日 HH时mm分ss秒")}</div>
                         </Col>
                     </Row>
                     <Divider />
@@ -144,7 +144,7 @@ class baseDetailItem extends Component {
                             <div className="acgnlist_detail_label">结束时间：</div>
                         </Col>
                         <Col lg={20} md={20} sm={20} xs={24}>
-                            <div>{moment(this.props.detailData.endDate).format("YYYY年MM月DD日 HH时MM分SS秒")}</div>
+                            <div>{moment(this.props.detailData.endDate).format("YYYY年MM月DD日 HH时mm分ss秒")}</div>
                         </Col>
                     </Row>
                     <Divider />

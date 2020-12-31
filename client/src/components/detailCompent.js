@@ -6,18 +6,6 @@ import { FilterFilled } from '@ant-design/icons';
 import Filter from './filter'
 import BaseDetailItem from './baseDetailItem'
 const { Option } = Select;
-
-const sortOption = (
-    <>
-        <Option value="0">创建时间从新到旧</Option>
-        <Option value="1">创建时间从旧到新</Option>
-        <Option value="2">评分从高到低</Option>
-        <Option value="3">评分从低到高</Option>
-        <Option value="4">进度从高到低</Option>
-        <Option value="5">进度从低到高</Option>
-    </>
-);
-
 class detailCompent extends Component {
     constructor(props) {
         super(props);
@@ -233,6 +221,31 @@ class detailCompent extends Component {
         return res;
     }
     render () {
+        const sortOption = () => {
+            switch (this.props.type) {
+                case "novel":
+                case "comic":
+                case "game":
+                    return <>
+                        <Option value="0">创建时间从新到旧</Option>
+                        <Option value="1">创建时间从旧到新</Option>
+                        <Option value="2">评分从高到低</Option>
+                        <Option value="3">评分从低到高</Option>
+                        <Option value="4">进度从高到低</Option>
+                        <Option value="5">进度从低到高</Option>
+                    </>
+                case "anime":
+                    return <>
+                        <Option value="0">创建时间从新到旧</Option>
+                        <Option value="1">创建时间从旧到新</Option>
+                        <Option value="2">评分从高到低</Option>
+                        <Option value="3">评分从低到高</Option>
+                    </>
+                default:
+                    break;
+            }
+
+        };
         let detailInfo = null;
         switch (this.props.type) {
             case "novel":
@@ -400,7 +413,7 @@ class detailCompent extends Component {
                         <div className="fr">
                             <Popover
                                 content={
-                                    <Filter sortOption={sortOption} showShowSelect={false} showStatusSelect={false} keyword={this.state.filterParams['doing'].keyword} sort={this.state.filterParams['doing'].sort} onSearch={(params) => this.filterChange(params, 'doing')} onClear={(params) => this.filterChange(params, 'doing')} />
+                                    <Filter sortOption={sortOption()} showShowSelect={false} showStatusSelect={false} keyword={this.state.filterParams['doing'].keyword} sort={this.state.filterParams['doing'].sort} onSearch={(params) => this.filterChange(params, 'doing')} onClear={(params) => this.filterChange(params, 'doing')} />
                                 }
                                 trigger="click"
                                 placement="bottomRight"
@@ -432,7 +445,7 @@ class detailCompent extends Component {
                                     </Col>;
                                 })}
                             </Row>
-                            <div className="tc mt10"><Pagination size="small" pageSize={20} current={this.state.page['doing']} total={this.state.total['doing']} onChange={(page) => this.pageChange(page, 'doing')} /></div>
+                            <div className="tc mt10"><Pagination size="small" showSizeChanger={false} pageSize={20} current={this.state.page['doing']} total={this.state.total['doing']} onChange={(page) => this.pageChange(page, 'doing')} /></div>
                         </div> :
                         <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />}
                 </div>
@@ -443,7 +456,7 @@ class detailCompent extends Component {
                         <div className="fr">
                             <Popover
                                 content={
-                                    <Filter sortOption={sortOption} showShowSelect={false} showStatusSelect={false} keyword={this.state.filterParams['want'].keyword} sort={this.state.filterParams['want'].sort} onSearch={(params) => this.filterChange(params, 'want')} onClear={(params) => this.filterChange(params, 'want')} />
+                                    <Filter sortOption={sortOption()} showShowSelect={false} showStatusSelect={false} keyword={this.state.filterParams['want'].keyword} sort={this.state.filterParams['want'].sort} onSearch={(params) => this.filterChange(params, 'want')} onClear={(params) => this.filterChange(params, 'want')} />
                                 }
                                 trigger="click"
                                 placement="bottomRight"
@@ -474,7 +487,7 @@ class detailCompent extends Component {
                                 </Col>;
                             })}
                         </Row>
-                        <div className="tc mt10"><Pagination size="small" pageSize={20} current={this.state.page['want']} total={this.state.total['want']} onChange={(page) => this.pageChange(page, 'want')} /></div>
+                        <div className="tc mt10"><Pagination size="small" showSizeChanger={false} pageSize={20} current={this.state.page['want']} total={this.state.total['want']} onChange={(page) => this.pageChange(page, 'want')} /></div>
                     </div> : <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />}
                 </div>
                 <Divider />
@@ -484,7 +497,7 @@ class detailCompent extends Component {
                         <div className="fr">
                             <Popover
                                 content={
-                                    <Filter sortOption={sortOption} showShowSelect={false} showStatusSelect={false} keyword={this.state.filterParams['complete'].keyword} sort={this.state.filterParams['complete'].sort} onSearch={(params) => this.filterChange(params, 'complete')} onClear={(params) => this.filterChange(params, 'complete')} />
+                                    <Filter sortOption={sortOption()} showShowSelect={false} showStatusSelect={false} keyword={this.state.filterParams['complete'].keyword} sort={this.state.filterParams['complete'].sort} onSearch={(params) => this.filterChange(params, 'complete')} onClear={(params) => this.filterChange(params, 'complete')} />
                                 }
                                 trigger="click"
                                 placement="bottomRight"
@@ -515,7 +528,7 @@ class detailCompent extends Component {
                                 </Col>;
                             })}
                         </Row>
-                        <div className="tc mt10"><Pagination size="small" pageSize={20} current={this.state.page['complete']} total={this.state.total['complete']} onChange={(page) => this.pageChange(page, 'complete')} /></div>
+                        <div className="tc mt10"><Pagination size="small" showSizeChanger={false} pageSize={20} current={this.state.page['complete']} total={this.state.total['complete']} onChange={(page) => this.pageChange(page, 'complete')} /></div>
                     </div> : <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />}
                 </div>
                 <Divider />
@@ -525,7 +538,7 @@ class detailCompent extends Component {
                         <div className="fr">
                             <Popover
                                 content={
-                                    <Filter sortOption={sortOption} showShowSelect={false} showStatusSelect={false} keyword={this.state.filterParams['out'].keyword} sort={this.state.filterParams['out'].sort} onSearch={(params) => this.filterChange(params, 'out')} onClear={(params) => this.filterChange(params, 'out')} />
+                                    <Filter sortOption={sortOption()} showShowSelect={false} showStatusSelect={false} keyword={this.state.filterParams['out'].keyword} sort={this.state.filterParams['out'].sort} onSearch={(params) => this.filterChange(params, 'out')} onClear={(params) => this.filterChange(params, 'out')} />
                                 }
                                 trigger="click"
                                 placement="bottomRight"
@@ -556,7 +569,7 @@ class detailCompent extends Component {
                                 </Col>;
                             })}
                         </Row>
-                        <div className="tc mt10"><Pagination size="small" pageSize={20} current={this.state.page['out']} total={this.state.total['out']} onChange={(page) => this.pageChange(page, 'out')} /></div>
+                        <div className="tc mt10"><Pagination size="small" showSizeChanger={false} pageSize={20} current={this.state.page['out']} total={this.state.total['out']} onChange={(page) => this.pageChange(page, 'out')} /></div>
                     </div> : <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />}
                 </div>
                 {this.state.detailData && <Modal

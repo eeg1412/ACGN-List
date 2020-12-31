@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, Table, Switch, Modal, Form, Tag, Slider, Input, Image, message, Pagination, Select, InputNumber, Radio, Checkbox } from 'antd';
+import { Button, Table, Switch, Modal, Form, Tag, Slider, Input, Image, message, Pagination, Select, InputNumber, Radio, Checkbox, Tooltip } from 'antd';
 import { FilterFilled, ExclamationCircleOutlined } from '@ant-design/icons';
 import ReactMarkdown from 'react-markdown/with-html';
 import BaseFormItem from './baseFormItem'
@@ -13,16 +13,6 @@ const _ = require('lodash');
 const { Option } = Select;
 const { confirm } = Modal;
 
-const sortOption = (
-    <>
-        <Option value="0">创建时间从新到旧</Option>
-        <Option value="1">创建时间从旧到新</Option>
-        <Option value="2">评分从高到低</Option>
-        <Option value="3">评分从低到高</Option>
-        <Option value="4">进度从高到低</Option>
-        <Option value="5">进度从低到高</Option>
-    </>
-);
 class adminPageCompent extends Component {
     constructor(props) {
         super(props);
@@ -87,9 +77,9 @@ class adminPageCompent extends Component {
                             <>
                                 {original.map(original => {
                                     return (
-                                        <Tag key={original}>
+                                        <Tooltip title={original}><Tag key={original} className="acgnlist_tag_max80">
                                             {original}
-                                        </Tag>
+                                        </Tag></Tooltip>
                                     );
                                 })}
                             </>
@@ -102,9 +92,9 @@ class adminPageCompent extends Component {
                             <>
                                 {author.map(author => {
                                     return (
-                                        <Tag key={author}>
+                                        <Tooltip title={author}><Tag key={author} className="acgnlist_tag_max80">
                                             {author}
-                                        </Tag>
+                                        </Tag></Tooltip>
                                     );
                                 })}
                             </>
@@ -134,9 +124,9 @@ class adminPageCompent extends Component {
                             <>
                                 {original.map(original => {
                                     return (
-                                        <Tag key={original}>
+                                        <Tooltip title={original}><Tag key={original} className="acgnlist_tag_max80">
                                             {original}
-                                        </Tag>
+                                        </Tag></Tooltip>
                                     );
                                 })}
                             </>
@@ -149,9 +139,9 @@ class adminPageCompent extends Component {
                             <>
                                 {directed.map(directed => {
                                     return (
-                                        <Tag key={directed}>
+                                        <Tooltip title={directed}><Tag key={directed} className="acgnlist_tag_max80">
                                             {directed}
-                                        </Tag>
+                                        </Tag></Tooltip>
                                     );
                                 })}
                             </>
@@ -253,18 +243,21 @@ class adminPageCompent extends Component {
             },
             {
                 title: '录入时间',
+                width: 214,
                 dataIndex: 'creatDate',
-                render: creatDate => <div>{moment(creatDate).format('YYYY-MM-DD h:mm:ss')}</div>
+                render: creatDate => <div>{moment(creatDate).format('YYYY年MM月DD日 HH:mm:ss')}</div>
             },
             {
                 title: '开始时间',
+                width: 214,
                 dataIndex: 'startDate',
-                render: startDate => <div>{startDate && moment(startDate).format('YYYY-MM-DD h:mm:ss')}</div>
+                render: startDate => <div>{startDate && moment(startDate).format('YYYY年MM月DD日 HH:mm:ss')}</div>
             },
             {
                 title: '结束时间',
+                width: 214,
                 dataIndex: 'endDate',
-                render: endDate => <div>{endDate && moment(endDate).format('YYYY-MM-DD h:mm:ss')}</div>
+                render: endDate => <div>{endDate && moment(endDate).format('YYYY年MM月DD日 HH:mm:ss')}</div>
             },
             {
                 title: '显示',
@@ -596,7 +589,9 @@ class adminPageCompent extends Component {
         });
     }
     filterChange = (params) => {
-        this.setState(params, () => {
+        const stateData = { ...params };
+        stateData["page"] = 1;
+        this.setState(stateData, () => {
             this.searchDataList();
         });
     }
@@ -612,6 +607,31 @@ class adminPageCompent extends Component {
         });
     }
     render () {
+        const sortOption = () => {
+            switch (this.props.type) {
+                case "novel":
+                case "comic":
+                case "game":
+                    return <>
+                        <Option value="0">创建时间从新到旧</Option>
+                        <Option value="1">创建时间从旧到新</Option>
+                        <Option value="2">评分从高到低</Option>
+                        <Option value="3">评分从低到高</Option>
+                        <Option value="4">进度从高到低</Option>
+                        <Option value="5">进度从低到高</Option>
+                    </>
+                case "anime":
+                    return <>
+                        <Option value="0">创建时间从新到旧</Option>
+                        <Option value="1">创建时间从旧到新</Option>
+                        <Option value="2">评分从高到低</Option>
+                        <Option value="3">评分从低到高</Option>
+                    </>
+                default:
+                    break;
+            }
+
+        };
         const otherForm = () => {
             let form = <></>;
             switch (this.props.type) {
@@ -694,17 +714,17 @@ class adminPageCompent extends Component {
                 </div>
                 <div style={{ "display": this.state.filterOpen ? 'block' : 'none' }} className="mt10">
 
-                    <Filter sortOption={sortOption} showShowSelect={true} showStatusSelect={true} showMode={this.state.showMode} keyword={this.state.keyword} sort={this.state.sort} status={this.state.status} onSearch={(params) => this.filterChange(params)} onClear={(params) => this.filterChange(params)} />
+                    <Filter sortOption={sortOption()} showShowSelect={true} showStatusSelect={true} showMode={this.state.showMode} keyword={this.state.keyword} sort={this.state.sort} status={this.state.status} onSearch={(params) => this.filterChange(params)} onClear={(params) => this.filterChange(params)} />
                 </div>
                 <div className="mt10">
                     <Table rowKey="_id"
                         bordered
                         columns={this.state.columns}
-                        dataSource={this.state.data} scroll={{ x: 2000 }} sticky
+                        dataSource={this.state.data} scroll={{ x: 2500 }} sticky
                         pagination={false}
                     />
                     <div className="tr mt10">
-                        <Pagination current={this.state.page}
+                        <Pagination current={this.state.page} showSizeChanger={false}
                             total={this.state.total}
                             onChange={this.pageChange}
                             pageSize={20} />

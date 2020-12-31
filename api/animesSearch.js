@@ -52,12 +52,6 @@ module.exports = async function (req, res, next) {
         case '3':
             sortData = { "score": 1 }
             break;
-        case '4':
-            sortData = { "progress": -1 }
-            break;
-        case '5':
-            sortData = { "progress": 1 }
-            break;
     }
 
     // 查询数据
