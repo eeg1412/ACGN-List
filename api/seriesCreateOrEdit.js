@@ -160,6 +160,7 @@ module.exports = async function (req, res, next) {
     }
     res.send({
         code: 1,
+        seriesData: seriesData,
         msg: 'ok'
     });
 };

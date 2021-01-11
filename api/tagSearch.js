@@ -25,7 +25,7 @@ module.exports = async function (req, res, next) {
         const reg = new RegExp(name, 'i');
         params["name"] = { $regex: reg };
     }
-    const tagsData = {};
+    let tagsData = {};
     if (isAll) {
         const tagsData_ = await tagsUtils.findMany(params);
         tagsData["data"] = tagsData_;

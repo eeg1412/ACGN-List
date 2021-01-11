@@ -32,6 +32,8 @@ const apiNovelsCreateOrEdit = require('../api/novelsCreateOrEdit');
 const apiNovelsSearch = require('../api/novelsSearch');
 const apiNovelsDelete = require('../api/novelsDelete');
 const apiAdminChangePassword = require('../api/adminChangePassword');
+const apiQuickImportSearch = require('../api/quickImportSearch');
+const apiQuickImportGetData = require('../api/quickImportGetData');
 
 // post
 router.post('/adminregister', apiAdminRegister);
@@ -60,6 +62,8 @@ router.post('/novelsDelete', apiNovelsDelete);
 router.post('/tagDelete', apiTagDelete);
 router.post('/tagEdit', apiTagEdit);
 router.post('/adminChangePassword', apiAdminChangePassword);
+router.post('/quickImportSearch', apiQuickImportSearch);
+router.post('/quickImportGetData', apiQuickImportGetData);
 
 
 // get

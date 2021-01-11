@@ -40,6 +40,11 @@ class adminPageCompent extends Component {
         this.setColumsData();
         this.searchDataList();
     }
+    findInfoData = (data, infoArr) => {
+        return data.infoData.find((item) => {
+            return infoArr.indexOf(item.tip) !== -1;
+        });
+    }
     searchTypeOptions = () => {
         switch (this.props.type) {
             case "game":
@@ -75,9 +80,9 @@ class adminPageCompent extends Component {
                         dataIndex: 'original',
                         render: original => (
                             <>
-                                {original.map(original => {
+                                {original.map((original, index) => {
                                     return (
-                                        <Tooltip title={original}><Tag key={original} className="acgnlist_tag_max80">
+                                        <Tooltip title={original} key={original + index} ><Tag className="acgnlist_tag_max80">
                                             {original}
                                         </Tag></Tooltip>
                                     );
@@ -90,9 +95,9 @@ class adminPageCompent extends Component {
                         dataIndex: 'author',
                         render: author => (
                             <>
-                                {author.map(author => {
+                                {author.map((author, index) => {
                                     return (
-                                        <Tooltip title={author}><Tag key={author} className="acgnlist_tag_max80">
+                                        <Tooltip title={author} key={author + index}><Tag className="acgnlist_tag_max80">
                                             {author}
                                         </Tag></Tooltip>
                                     );
@@ -122,9 +127,9 @@ class adminPageCompent extends Component {
                         dataIndex: 'original',
                         render: original => (
                             <>
-                                {original.map(original => {
+                                {original.map((original, index) => {
                                     return (
-                                        <Tooltip title={original}><Tag key={original} className="acgnlist_tag_max80">
+                                        <Tooltip title={original} key={original + index}><Tag className="acgnlist_tag_max80">
                                             {original}
                                         </Tag></Tooltip>
                                     );
@@ -137,9 +142,9 @@ class adminPageCompent extends Component {
                         dataIndex: 'directed',
                         render: directed => (
                             <>
-                                {directed.map(directed => {
+                                {directed.map((directed, index) => {
                                     return (
-                                        <Tooltip title={directed}><Tag key={directed} className="acgnlist_tag_max80">
+                                        <Tooltip title={directed} key={directed + index}><Tag className="acgnlist_tag_max80">
                                             {directed}
                                         </Tag></Tooltip>
                                     );
@@ -427,6 +432,84 @@ class adminPageCompent extends Component {
             editForm: _.cloneDeep(newEditForm)
         });
     };
+
+    sendQuickData = (data) => {
+        // const newForm = _.cloneDeep(this.state.editForm);
+        const quickData = {};
+        quickData["originalName"] = data["originalName"] || '';
+        quickData["introduce"] = data["introduce"] || '';
+        quickData["base64"] = data["imgBase64"] ? 'data:image/jpeg;base64,' + data["imgBase64"] : '';
+        const titleData = this.findInfoData(data, ['中文名']);
+        if (titleData) {
+            quickData["title"] = titleData.text;
+        }
+
+        /* 以下为类型数据 */
+        switch (this.props.type) {
+            case "anime":
+                // 查询原作
+                const originalData = this.findInfoData(data, ['原作']);
+                if (originalData) {
+                    quickData["original"] = originalData.text.split('、');
+                }
+                // 查询导演
+                const directedData = this.findInfoData(data, ['导演', '总导演']);
+                if (directedData) {
+                    quickData["directed"] = directedData.text.split('、');
+                }
+                // 动画制作
+                const animationCompanyData = this.findInfoData(data, ['动画制作']);
+                if (animationCompanyData) {
+                    quickData["animationCompany"] = animationCompanyData.text;
+                }
+                // 已看集数
+                const watchedData = this.findInfoData(data, ['话数']);
+                if (watchedData) {
+                    quickData["watched"] = Number(watchedData.text);
+                }
+                break;
+            case "novel":
+            case "comic":
+                quickData["author"] = [];
+                // 查询原作
+                const ncoriginalData = this.findInfoData(data, ['原作']);
+                if (ncoriginalData) {
+                    quickData["original"] = ncoriginalData.text.split('、');
+                }
+                // 查询作者
+                const ncauthordData = this.findInfoData(data, ['作者']);
+                if (ncauthordData) {
+                    quickData["author"] = [...ncauthordData.text.split('、')];
+                }
+                // 查询插画
+                const illData = this.findInfoData(data, ['插图']);
+                if (illData) {
+                    quickData["author"] = [...illData.text.split('、')];
+                }
+                // 出版社
+                const publishingHouseData = this.findInfoData(data, ['出版社']);
+                if (publishingHouseData) {
+                    quickData["publishingHouse"] = publishingHouseData.text;
+                }
+                break;
+            case "game":
+                // 游戏公司
+                const gameCompanyData = this.findInfoData(data, ['开发']);
+                if (gameCompanyData) {
+                    quickData["gameCompany"] = gameCompanyData.text;
+                }
+                break;
+            default:
+                break;
+        }
+
+        const editForm = Object.assign({}, this.state.editForm, quickData);
+        this.setState({
+            editForm: editForm
+        }, () => {
+            console.log(this.state.editForm)
+        });
+    }
 
     handleOk = e => {
         let params = _.cloneDeep(this.state.editForm);
@@ -750,7 +833,7 @@ class adminPageCompent extends Component {
                             layout="horizontal"
                             className="acgnlist_admin_form"
                         >
-                            <BaseFormItem onRef={this.onRef} editForm={this.state.editForm} formChange={(key, value) => this.formChange(key, value)} />
+                            <BaseFormItem onRef={this.onRef} type={this.props.type} editForm={this.state.editForm} formChange={(key, value) => this.formChange(key, value)} sendQuickData={(data) => this.sendQuickData(data)} />
                             {otherForm()}
                         </Form>
                     </div>

@@ -81,6 +81,12 @@ export default function (api) {
     adminChangePassword (data) {
       return api.post('/adminChangePassword', data)
     },
+    quickImportSearch (data) {
+      return api.post('/quickImportSearch', data)
+    },
+    quickImportGetData (data) {
+      return api.post('/quickImportGetData', data)
+    },
     checkadmin () {
       return api.get('/checkadmin')
     },
