@@ -15,7 +15,7 @@ class crop extends Component {
                 // aspect: 3 / 4
             }
         }
-        this.cropMaxWidth = 900;
+        this.cropMaxWidth = 1920;
     };
     reSetCrop = () => {
         const crop = {

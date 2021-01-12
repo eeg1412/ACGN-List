@@ -507,7 +507,7 @@ class adminPageCompent extends Component {
         this.setState({
             editForm: editForm
         }, () => {
-            console.log(this.state.editForm)
+            // console.log(this.state.editForm)
         });
     }
 
