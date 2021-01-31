@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Image, Rate, Divider, Col, Row } from 'antd';
+import { Image, Rate, Divider, Col, Row, Button } from 'antd';
 import moment from 'moment';
 import 'moment/locale/zh-cn';
 import ReactMarkdown from 'react-markdown/with-html';
@@ -47,7 +47,7 @@ class baseDetailItem extends Component {
                         <div className="acgnlist_detail_label">系列：</div>
                     </Col>
                     <Col lg={20} md={20} sm={20} xs={24}>
-                        <span>{this.props.detailData.series.title}</span>
+                        {this.props.seriesBtnShow ? <Button type="link" className="acgnlist_detail_series_btn" onClick={() => this.props.onSeriesBtnClick(this.props.detailData.series, this.props.detailData.seriesTags)}>{this.props.detailData.series.title}</Button> : <span>{this.props.detailData.series.title}</span>}
                     </Col>
                 </Row>
                 <Divider />

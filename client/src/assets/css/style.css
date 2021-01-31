@@ -993,6 +993,10 @@ body::-webkit-scrollbar-thumb:hover {
     margin: 8px 0px;
   }
 }
+.acgnlist_detail_series_btn {
+  height: 0;
+  line-height: initial;
+}
 /* admin */
 .acgnlist_admin_login_body {
   margin: 0 auto;
@@ -1081,4 +1085,20 @@ body::-webkit-scrollbar-thumb:hover {
 }
 .editor-toolbar.fullscreen {
   z-index: 88 !important;
+}
+.acgnlist_detail_series_modal {
+  max-width: 1600px;
+}
+.acgnlist_detail_series_modal_content.ant-col {
+  max-width: calc(100% - 45px);
+}
+.acgnlist_divider_6px {
+  margin: 6px 0 !important;
+}
+.acgnlist_detail_series_label {
+  font-weight: bold;
+  text-align: left;
+}
+.acgnlist_baseDetailItem_borderBox.nomargin {
+  margin: 0px;
 }

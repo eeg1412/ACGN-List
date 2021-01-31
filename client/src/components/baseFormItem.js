@@ -24,6 +24,8 @@ class baseFormItem extends Component {
       hasPrevPage: false,
       hasNextPage: false,
       speedImportantData: [],
+      mdModalShow: false,
+      mdModalType: '',
     }
   }
   componentDidMount () {
@@ -225,6 +227,12 @@ class baseFormItem extends Component {
       }
     });
 
+  }
+  openMDEditor = (text, type) => {
+    this.setState({
+      mdModalShow: true,
+      mdModalType: type
+    });
   }
   render () {
     const speedImportFoot = <>

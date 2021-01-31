@@ -5,11 +5,14 @@ import moment from 'moment';
 import { FilterFilled } from '@ant-design/icons';
 import Filter from './filter'
 import BaseDetailItem from './baseDetailItem'
+import SeriesCompent from './seriesCompent'
 const { Option } = Select;
 class detailCompent extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            seriesDialogShow: false,
+            seriesData: null,
             detailData: null,
             detailShow: false,
             doingList: [],
@@ -184,6 +187,16 @@ class detailCompent extends Component {
             detailData: null
         });
     }
+    serieshandleCancel = (e) => {
+        this.setState({
+            seriesDialogShow: false
+        });
+    }
+    seriesdetailAfterClose = () => {
+        this.setState({
+            seriesData: null
+        });
+    }
     secondInfo = (data) => {
         let res = "";
         switch (this.props.type) {
@@ -219,6 +232,13 @@ class detailCompent extends Component {
                 break;
         }
         return res;
+    }
+    onSeriesBtnClick = (series, seriesTags) => {
+        series["seriesTags"] = seriesTags;
+        this.setState({
+            seriesDialogShow: true,
+            seriesData: series
+        });
     }
     render () {
         const sortOption = () => {
@@ -584,8 +604,23 @@ class detailCompent extends Component {
                     afterClose={this.detailAfterClose}
                 >
                     <div>
-                        <BaseDetailItem detailData={this.state.detailData} statusList={this.props.statusList} detailInfo={detailInfo} />
+                        <BaseDetailItem onSeriesBtnClick={this.onSeriesBtnClick} detailData={this.state.detailData} statusList={this.props.statusList} detailInfo={detailInfo} seriesBtnShow={true} />
 
+                    </div>
+                </Modal>}
+                {this.state.seriesData && <Modal
+                    className="acgnlist_detail_modal acgnlist_modal"
+                    title={this.state.seriesData.title}
+                    centered={true}
+                    maskClosable={true}
+                    destroyOnClose={true}
+                    footer={null}
+                    visible={this.state.seriesDialogShow}
+                    onCancel={this.serieshandleCancel}
+                    afterClose={this.seriesdetailAfterClose}
+                >
+                    <div>
+                        <SeriesCompent seriesData={this.state.seriesData} />
                     </div>
                 </Modal>}
             </div>

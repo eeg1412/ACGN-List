@@ -2,7 +2,7 @@ const animesUtils = require('../mongodb/utils/animes');
 const _ = require('lodash');
 const utils = require('../utils/utils');
 const validator = require('validator');
-
+const mongoose = require('mongoose');
 
 module.exports = async function (req, res, next) {
     // 数据读取
@@ -12,6 +12,16 @@ module.exports = async function (req, res, next) {
     // 显示区分，0为全部，1为仅显示，2为仅不显示
     let showMode = String(req.body.showMode || '1');
     const status = String(req.body.status || '');
+    const seriesId = req.body.seriesId;
+    if (seriesId) {
+        if (!validator.isMongoId(seriesId)) {
+            res.send({
+                code: 0,
+                msg: "系列id有误！"
+            });
+            return false;
+        }
+    }
     if (!_.isInteger(page) || page < 1) {
         page = 1;
     }
@@ -76,6 +86,10 @@ module.exports = async function (req, res, next) {
             break;
         case '2':
             params["show"] = false;
+    }
+    // 系列ID
+    if (seriesId) {
+        params["series._id"] = mongoose.Types.ObjectId(seriesId);
     }
     const data = await animesUtils.findByKeyWords(params, 20, page, '', sortData);
 
