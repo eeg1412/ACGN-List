@@ -495,10 +495,10 @@ class seriesCompent extends Component {
 
             <div>
                 <Row gutter={16}>
-                    <Col md={24} sm={24} xs={24}>
+                    <Col md={12} sm={24} xs={24}>
                         <div className="mb10">
                             <Image
-                                src={`/api/cover?type=series&id=${this.props.seriesData._id}`} className="w_06 acgnlist_mouse_pointer" alt={this.props.seriesData.title}
+                                src={`/api/cover?type=series&id=${this.props.seriesData._id}`} className="w_10 acgnlist_mouse_pointer" alt={this.props.seriesData.title}
                             />
                         </div>
                         <Row>
@@ -549,7 +549,7 @@ class seriesCompent extends Component {
                             <Divider className="acgnlist_divider_6px" />
                         </>}
                     </Col>
-                    <Col md={24} sm={24} xs={24}>
+                    <Col md={12} sm={24} xs={24}>
                         {DetailRow("anime", "animes", "seriesContentAnimesTotal", "seriesContentAnimesData", "动画")}
                         {DetailRow("comic", "comics", "seriesContentComicsTotal", "seriesContentComicsData", "漫画")}
                         {DetailRow("game", "games", "seriesContentGamesTotal", "seriesContentGamesData", "游戏")}

@@ -618,6 +618,7 @@ class detailCompent extends Component {
                     visible={this.state.seriesDialogShow}
                     onCancel={this.serieshandleCancel}
                     afterClose={this.seriesdetailAfterClose}
+                    width={760}
                 >
                     <div>
                         <SeriesCompent seriesData={this.state.seriesData} />
