@@ -6,24 +6,47 @@
 var app = require('../app');
 var debug = require('debug')('mern:server');
 var http = require('http');
+const https = require('https')
+const fs = require('fs')
 
 /**
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.PORT || '3000');
-app.set('port', port);
+// var port = normalizePort(process.env.PORT || '3000');
+// app.set('port', port);
 
 /**
  * Create HTTP server.
  */
 
-var server = http.createServer(app);
+// var server = http.createServer(app);
+var server = null
+if (process.env.USE_HTTPS === "1") {
+  if (!process.env.KEY_FILE_PATH || !process.env.CERT_FILE_PATH) {
+    throw new Error("https需要在.env文件中设置私钥和证书文件！")
+  }
+  const httpsOption = {
+    key: fs.readFileSync(process.env.KEY_FILE_PATH),
+    cert: fs.readFileSync(process.env.CERT_FILE_PATH),
+  }
+  server = https
+    .createServer(httpsOption, app)
+    .listen(Number(process.env.SSL_PORT) || "443", '0.0.0.0')
+  http
+    .createServer(function (req, res) {
+      res.writeHead(301, { Location: process.env.SITE_URL })
+      res.end()
+    })
+    .listen(process.env.PORT || "3000", '0.0.0.0')
+} else {
+  server = http.createServer(app).listen(process.env.PORT || "3000", '0.0.0.0')
+}
 /**
  * Listen on provided port, on all network interfaces.
  */
 
-server.listen(port);
+// server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);
 
