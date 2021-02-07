@@ -1,8 +1,8 @@
 # ACGN-List
 
-自用动画漫画游戏小说记录系统。
-前端使用 react + Ant Design
-后端使用 nodejs + express
+自用动画漫画游戏小说记录系统。  
+前端使用 react + Ant Design  
+后端使用 nodejs + express  
 数据库使用 mongodb
 
 ## 预览
